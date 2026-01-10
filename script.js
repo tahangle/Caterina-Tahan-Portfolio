@@ -585,11 +585,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     ease: 'sine.out'
                 });
 
-                // Create 3 centered images
-                for (let i = 0; i < 3; i++) {
-                    const isLast = i === 2;
-                    createThankYouImage(i, isLast ? showThankYouText : null);
-                }
+                // Create 1 centered image
+                createThankYouImage(0, showThankYouText);
             }
 
             function showThankYouText() {
