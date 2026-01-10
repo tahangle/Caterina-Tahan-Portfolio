@@ -763,14 +763,14 @@ li {
     }
 
     .submit-btn {
-        opacity: 1;
+        opacity: 1 !important;
     }
 
     .form-group {
-        opacity: 1;
+        opacity: 1 !important;
     }
 
     .input-line {
-        transform: scaleX(1);
+        transform: scaleX(1) !important;
     }
 }
