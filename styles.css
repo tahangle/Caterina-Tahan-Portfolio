@@ -608,14 +608,19 @@ li {
 /* Mobile Responsive */
 @media (max-width: 768px) {
     html, body {
-        height: 100vh;
-        overflow: hidden;
+        height: 100%;
+        min-height: 100vh;
     }
 
     body {
         display: flex;
         flex-direction: column;
         padding-bottom: 0;
+        overflow: hidden;
+    }
+
+    body:has(.contact-page) {
+        overflow: auto;
     }
 
     .draw-prompt {
@@ -626,6 +631,10 @@ li {
     header {
         padding: 30px;
         flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 100;
     }
 
     .menu-toggle {
@@ -643,10 +652,6 @@ li {
         gap: 0;
         padding: 0 0 20px;
         overflow: hidden;
-    }
-
-    header {
-        position: relative;
     }
 
     main {
@@ -741,10 +746,12 @@ li {
     }
 
     .contact-page {
-        padding: 40px 30px 100px;
-        display: block;
+        padding: 40px 30px 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         overflow-y: auto;
-        flex: 1;
+        -webkit-overflow-scrolling: touch;
     }
 
     .contact-form {
