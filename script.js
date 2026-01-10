@@ -424,8 +424,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fade in the form group (label + input)
             gsap.to(group, {
                 opacity: 1,
-                duration: 1.2,
-                ease: 'power2.out',
+                duration: 1.4,
+                ease: 'sine.out',
                 delay: baseDelay
             });
 
@@ -433,8 +433,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (inputLine) {
                 gsap.to(inputLine, {
                     scaleX: 1,
-                    duration: 0.8,
-                    ease: 'power2.out',
+                    duration: 1,
+                    ease: 'sine.inOut',
                     delay: baseDelay + 0.3
                 });
             }
@@ -444,8 +444,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (submitBtn) {
             gsap.to(submitBtn, {
                 opacity: 1,
-                duration: 1.2,
-                ease: 'power2.out',
+                duration: 1.4,
+                ease: 'sine.out',
                 delay: 0.1 + (formGroups.length * 0.2) + 0.3
             });
         }
