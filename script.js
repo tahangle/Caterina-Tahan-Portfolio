@@ -451,8 +451,39 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Thank you overlay animation on submit
+        // Staggered fade-in for form groups and line trace animation
+        formGroups.forEach((group, index) => {
+            const inputLine = group.querySelector('.input-line');
+            const baseDelay = 0.1 + (index * 0.2);
+
+            // Fade in the form group (label + input)
+            gsap.to(group, {
+                opacity: 1,
+                duration: 1.4,
+                ease: 'sine.out',
+                delay: baseDelay
+            });
+
+            // Trace the line from left to right
+            if (inputLine) {
+                gsap.to(inputLine, {
+                    scaleX: 1,
+                    duration: 1,
+                    ease: 'sine.inOut',
+                    delay: baseDelay + 0.3
+                });
+            }
+        });
+
+        // Fade in submit button after form groups
         if (submitBtn) {
+            gsap.to(submitBtn, {
+                opacity: 1,
+                duration: 1.4,
+                ease: 'sine.out',
+                delay: 0.1 + (formGroups.length * 0.2) + 0.3
+            });
+
             // Thank you overlay animation on submit
             const thankYouOverlay = document.querySelector('.thank-you-overlay');
             const thankYouCenter = document.querySelector('.thank-you-center');
