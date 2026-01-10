@@ -542,60 +542,87 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             contactForm.addEventListener('submit', function(e) {
-                // Only show animation if form is valid
+                e.preventDefault();
+
+                // Only proceed if form is valid
                 const inputs = contactForm.querySelectorAll('input, textarea');
                 let isValid = true;
                 inputs.forEach(input => {
                     if (!input.validity.valid) {
                         isValid = false;
+                        input.closest('.form-group').classList.add('has-error');
                     }
                 });
 
-                if (isValid) {
-                    e.preventDefault();
+                if (!isValid) return;
 
-                    // Show overlay
-                    thankYouOverlay.classList.add('active');
-                    gsap.to(thankYouOverlay, {
-                        opacity: 1,
-                        duration: 0.5,
-                        ease: 'sine.out'
-                    });
+                // Get form data
+                const formData = new FormData(contactForm);
 
-                    // Create scattered images
-                    for (let i = 0; i < 12; i++) {
-                        createThankYouImage(i);
+                // Submit via fetch to Formspree
+                fetch(contactForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
                     }
-
-                    // Show center text
-                    gsap.to(thankYouCenter, {
-                        opacity: 1,
-                        duration: 1,
-                        ease: 'sine.out',
-                        delay: 0.3
-                    });
-
-                    // Fade out and submit form after animation
-                    setTimeout(function() {
-                        gsap.to(thankYouCenter, {
-                            opacity: 0,
-                            duration: 0.5,
-                            ease: 'sine.in'
-                        });
-                        gsap.to(thankYouOverlay, {
-                            opacity: 0,
-                            duration: 0.5,
-                            ease: 'sine.in',
-                            delay: 0.3,
-                            onComplete: function() {
-                                thankYouOverlay.classList.remove('active');
-                                // Actually submit the form
-                                contactForm.submit();
-                            }
-                        });
-                    }, 2500);
-                }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Success - show animation
+                        showThankYouAnimation();
+                    } else {
+                        // Error
+                        alert('There was an error sending your message. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    alert('There was an error sending your message. Please try again.');
+                });
             });
+
+            function showThankYouAnimation() {
+                // Show overlay
+                thankYouOverlay.classList.add('active');
+                gsap.to(thankYouOverlay, {
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'sine.out'
+                });
+
+                // Create scattered images
+                for (let i = 0; i < 12; i++) {
+                    createThankYouImage(i);
+                }
+
+                // Show center text
+                gsap.to(thankYouCenter, {
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'sine.out',
+                    delay: 0.3
+                });
+
+                // Fade out after animation
+                setTimeout(function() {
+                    gsap.to(thankYouCenter, {
+                        opacity: 0,
+                        duration: 0.5,
+                        ease: 'sine.in'
+                    });
+                    gsap.to(thankYouOverlay, {
+                        opacity: 0,
+                        duration: 0.5,
+                        ease: 'sine.in',
+                        delay: 0.3,
+                        onComplete: function() {
+                            thankYouOverlay.classList.remove('active');
+                            // Reset form
+                            contactForm.reset();
+                        }
+                    });
+                }, 2500);
+            }
         }
     }
 
