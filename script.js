@@ -508,30 +508,33 @@ document.addEventListener('DOMContentLoaded', function() {
             ];
 
             // Function to create animated image
-            function createThankYouImage(index, onLastFadeOut) {
+            function createThankYouImage(index, totalImages, onLastFadeOut) {
                 const img = document.createElement('img');
                 const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
                 img.src = randomImage;
 
                 thankYouImagesContainer.appendChild(img);
 
+                const stagger = 0.15;
+                const isLast = index === totalImages - 1;
+
                 // Animate in with delay
                 gsap.to(img, {
                     opacity: 1,
-                    duration: 0.6,
+                    duration: 0.4,
                     ease: 'sine.out',
-                    delay: index * 0.2
+                    delay: index * stagger
                 });
 
                 // Fade out
                 gsap.to(img, {
                     opacity: 0,
-                    duration: 0.6,
+                    duration: 0.4,
                     ease: 'sine.in',
-                    delay: index * 0.2 + 1.2,
+                    delay: index * stagger + 0.3,
                     onComplete: function() {
                         img.remove();
-                        if (onLastFadeOut) onLastFadeOut();
+                        if (isLast && onLastFadeOut) onLastFadeOut();
                     }
                 });
             }
@@ -585,8 +588,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     ease: 'sine.out'
                 });
 
-                // Create 1 centered image
-                createThankYouImage(0, showThankYouText);
+                // Create 10 images cycling in same position
+                const totalImages = 10;
+                for (let i = 0; i < totalImages; i++) {
+                    createThankYouImage(i, totalImages, showThankYouText);
+                }
             }
 
             function showThankYouText() {
