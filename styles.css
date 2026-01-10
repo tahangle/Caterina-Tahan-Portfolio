@@ -761,4 +761,16 @@ li {
     .form-group {
         margin-bottom: 25px;
     }
+
+    .submit-btn {
+        opacity: 1;
+    }
+
+    .form-group {
+        opacity: 1;
+    }
+
+    .input-line {
+        transform: scaleX(1);
+    }
 }
