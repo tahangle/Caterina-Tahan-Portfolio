@@ -448,6 +448,64 @@ document.addEventListener('DOMContentLoaded', function() {
                 ease: 'sine.out',
                 delay: 0.1 + (formGroups.length * 0.2) + 0.3
             });
+
+            // Thank you popup animation on click
+            const thankYouPopup = document.querySelector('.thank-you-popup');
+            const thankYouImage = document.querySelector('.thank-you-image');
+
+            // Gallery images for random selection
+            const galleryImages = [
+                'Images/Gallery/Group 12.png',
+                'Images/Gallery/Group 13.png',
+                'Images/Gallery/Group 14.png',
+                'Images/Gallery/Group 15.png',
+                'Images/Gallery/Group 16.png',
+                'Images/Gallery/Group 17.png',
+                'Images/Gallery/Group 18.png',
+                'Images/Gallery/Group 19.png',
+                'Images/Gallery/Group 20.png',
+                'Images/Gallery/Group 21.png',
+                'Images/Gallery/Group 22.png',
+                'Images/Gallery/Group 23.png',
+                'Images/Gallery/Group 24.png',
+                'Images/Gallery/Group 25.png'
+            ];
+
+            submitBtn.addEventListener('click', function(e) {
+                // Get button position
+                const rect = submitBtn.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top - 20;
+
+                // Set random image
+                const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
+                thankYouImage.src = randomImage;
+
+                // Position popup above button
+                thankYouPopup.style.left = x + 'px';
+                thankYouPopup.style.top = y + 'px';
+                thankYouPopup.style.transform = 'translate(-50%, -100%)';
+
+                // Animate popup
+                gsap.fromTo(thankYouPopup,
+                    { opacity: 0, y: 10 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.5,
+                        ease: 'sine.out',
+                        onComplete: function() {
+                            gsap.to(thankYouPopup, {
+                                opacity: 0,
+                                y: -10,
+                                duration: 0.5,
+                                ease: 'sine.in',
+                                delay: 1.2
+                            });
+                        }
+                    }
+                );
+            });
         }
     }
 
