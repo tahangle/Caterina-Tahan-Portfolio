@@ -258,7 +258,7 @@ main {
     .submit-btn {
         opacity: 1 !important;
         position: fixed !important;
-        bottom: 100px !important;
+        top: 100px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         background: red !important;
