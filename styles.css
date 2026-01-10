@@ -191,6 +191,8 @@ main {
     border-bottom: none;
     background: transparent;
     outline: none;
+    position: relative;
+    z-index: 1;
 }
 
 .form-group .input-wrapper {
@@ -206,6 +208,7 @@ main {
     background: #000;
     transform: scaleX(0);
     transform-origin: left;
+    pointer-events: none;
 }
 
 .form-group input:focus + .input-line,
@@ -221,6 +224,7 @@ main {
     color: #000;
     margin-top: 8px;
     opacity: 0.6;
+    pointer-events: none;
 }
 
 .form-group.has-error .error-message {
