@@ -279,6 +279,62 @@ document.addEventListener('DOMContentLoaded', function() {
             ease: 'power2.out',
             delay: 0.2
         });
+
+        // Video hover play functionality
+        const videoItems = projectsGrid.querySelectorAll('.project-video');
+        videoItems.forEach(item => {
+            const video = item.querySelector('video');
+            if (video) {
+                item.addEventListener('mouseenter', () => {
+                    video.play();
+                });
+                item.addEventListener('mouseleave', () => {
+                    video.pause();
+                    video.currentTime = 0;
+                });
+            }
+        });
+
+        // Freeze GIF functionality
+        const projectItems = projectsGrid.querySelectorAll('.project-item');
+        projectItems.forEach(item => {
+            const gifImage = item.querySelector('img[src$=".gif"]');
+            if (gifImage && !item.classList.contains('project-hover-swap')) {
+                const originalSrc = gifImage.src;
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Create a frozen version of the GIF
+                const freezeGif = () => {
+                    canvas.width = gifImage.naturalWidth || gifImage.width;
+                    canvas.height = gifImage.naturalHeight || gifImage.height;
+                    ctx.drawImage(gifImage, 0, 0);
+                    gifImage.dataset.originalSrc = originalSrc;
+                    gifImage.src = canvas.toDataURL('image/png');
+                };
+
+                // Wait for image to load before freezing
+                if (gifImage.complete) {
+                    freezeGif();
+                } else {
+                    gifImage.addEventListener('load', freezeGif);
+                }
+
+                // Play GIF on hover
+                item.addEventListener('mouseenter', () => {
+                    if (gifImage.dataset.originalSrc) {
+                        gifImage.src = gifImage.dataset.originalSrc;
+                    }
+                });
+
+                // Freeze GIF when hover ends
+                item.addEventListener('mouseleave', () => {
+                    if (gifImage.dataset.originalSrc) {
+                        freezeGif();
+                    }
+                });
+            }
+        });
     }
 
     // ==== PROJECT DETAIL GALLERY ====
@@ -352,6 +408,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         updateCursor();
+    }
+
+    // ==== CONTACT PAGE ====
+    const contactPage = document.querySelector('.contact-page');
+    if (contactPage) {
+        const formGroups = contactPage.querySelectorAll('.form-group');
+        const submitBtn = contactPage.querySelector('.submit-btn');
+
+        // Staggered fade-in for form groups and line trace animation
+        formGroups.forEach((group, index) => {
+            const inputLine = group.querySelector('.input-line');
+            const baseDelay = 0.1 + (index * 0.2);
+
+            // Fade in the form group (label + input)
+            gsap.to(group, {
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.out',
+                delay: baseDelay
+            });
+
+            // Trace the line from left to right
+            if (inputLine) {
+                gsap.to(inputLine, {
+                    scaleX: 1,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    delay: baseDelay + 0.3
+                });
+            }
+        });
+
+        // Fade in submit button after form groups
+        if (submitBtn) {
+            gsap.to(submitBtn, {
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.out',
+                delay: 0.1 + (formGroups.length * 0.2) + 0.3
+            });
+        }
     }
 
     // ==== MOBILE MENU ====

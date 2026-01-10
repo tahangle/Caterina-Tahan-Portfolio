@@ -155,9 +155,84 @@ main {
 
 /* Contact Page */
 .contact-page {
+    padding: 80px 60px 60px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.contact-form {
+    width: 100%;
+    max-width: 500px;
+}
+
+.form-group {
+    margin-bottom: 30px;
+    opacity: 0;
+}
+
+.form-group label {
+    display: block;
+    font-family: 'TimesNow', serif;
+    font-size: 14px;
+    font-weight: 200;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    font-family: 'TimesNow', serif;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 10px 0;
+    border: none;
+    border-bottom: none;
+    background: transparent;
+    outline: none;
+}
+
+.form-group .input-wrapper {
+    position: relative;
+}
+
+.form-group .input-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #000;
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.form-group input:focus + .input-line,
+.form-group textarea:focus + .input-line {
+    background: #666;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-btn {
+    font-family: 'TimesNow', serif;
+    font-size: 14px;
+    font-weight: 200;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    cursor: pointer;
     padding: 0;
-    height: calc(100vh - 120px);
-    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.submit-btn:hover {
+    opacity: 0.5;
 }
 
 #cursor-trail {
@@ -290,6 +365,11 @@ li {
     transition: opacity 0.3s ease;
 }
 
+.project-video .project-image {
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
 .project-item:hover .project-image {
     opacity: 0.8;
 }
@@ -321,6 +401,10 @@ li {
     top: 0;
     left: 0;
     opacity: 0;
+}
+
+.projects-grid .project-hover-swap:first-child .project-animated {
+    filter: saturate(0.75) hue-rotate(-10deg);
 }
 
 .project-hover-swap:hover .project-static {
@@ -418,6 +502,28 @@ li {
     height: 100%;
     object-fit: contain;
     display: block;
+}
+
+.gallery-slide-duo {
+    display: flex;
+    gap: 30px;
+    padding: 80px;
+}
+
+.gallery-slide-duo.active {
+    display: flex;
+}
+
+.gallery-slide-duo img {
+    width: 50%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.gallery-slide-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .gallery-cursor {
@@ -567,5 +673,17 @@ li {
     footer {
         font-size: 14px;
         left: 30px;
+    }
+
+    .contact-page {
+        padding: 40px 30px;
+    }
+
+    .contact-form {
+        max-width: 100%;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
     }
 }
