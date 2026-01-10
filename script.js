@@ -413,8 +413,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==== CONTACT PAGE ====
     const contactPage = document.querySelector('.contact-page');
     if (contactPage) {
+        const contactForm = contactPage.querySelector('.contact-form');
         const formGroups = contactPage.querySelectorAll('.form-group');
         const submitBtn = contactPage.querySelector('.submit-btn');
+
+        // Custom form validation
+        if (contactForm) {
+            const inputs = contactForm.querySelectorAll('input, textarea');
+
+            // Remove default validation tooltips
+            inputs.forEach(input => {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    this.closest('.form-group').classList.add('has-error');
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.validity.valid) {
+                        this.closest('.form-group').classList.remove('has-error');
+                    }
+                });
+            });
+
+            // Validate on submit
+            contactForm.addEventListener('submit', function(e) {
+                let hasErrors = false;
+                inputs.forEach(input => {
+                    if (!input.validity.valid) {
+                        input.closest('.form-group').classList.add('has-error');
+                        hasErrors = true;
+                    }
+                });
+
+                if (hasErrors) {
+                    e.preventDefault();
+                }
+            });
+        }
 
         // Staggered fade-in for form groups and line trace animation
         formGroups.forEach((group, index) => {

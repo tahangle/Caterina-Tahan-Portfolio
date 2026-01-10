@@ -213,6 +213,20 @@ main {
     background: #666;
 }
 
+.error-message {
+    display: none;
+    font-family: 'TimesNow', serif;
+    font-size: 12px;
+    font-weight: 200;
+    color: #000;
+    margin-top: 8px;
+    opacity: 0.6;
+}
+
+.form-group.has-error .error-message {
+    display: block;
+}
+
 .form-group textarea {
     resize: vertical;
     min-height: 100px;
