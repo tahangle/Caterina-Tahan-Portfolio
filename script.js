@@ -508,35 +508,30 @@ document.addEventListener('DOMContentLoaded', function() {
             ];
 
             // Function to create animated image
-            function createThankYouImage(index) {
+            function createThankYouImage(index, onLastFadeOut) {
                 const img = document.createElement('img');
                 const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
                 img.src = randomImage;
-
-                // Random position
-                const x = Math.random() * (window.innerWidth - 100);
-                const y = Math.random() * (window.innerHeight - 100);
-                img.style.left = x + 'px';
-                img.style.top = y + 'px';
 
                 thankYouImagesContainer.appendChild(img);
 
                 // Animate in with delay
                 gsap.to(img, {
                     opacity: 1,
-                    duration: 0.5,
+                    duration: 0.6,
                     ease: 'sine.out',
-                    delay: index * 0.08
+                    delay: index * 0.2
                 });
 
                 // Fade out
                 gsap.to(img, {
                     opacity: 0,
-                    duration: 0.8,
+                    duration: 0.6,
                     ease: 'sine.in',
-                    delay: index * 0.08 + 1.5,
+                    delay: index * 0.2 + 1.2,
                     onComplete: function() {
                         img.remove();
+                        if (onLastFadeOut) onLastFadeOut();
                     }
                 });
             }
@@ -590,20 +585,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     ease: 'sine.out'
                 });
 
-                // Create scattered images
-                for (let i = 0; i < 12; i++) {
-                    createThankYouImage(i);
+                // Create 3 centered images
+                for (let i = 0; i < 3; i++) {
+                    const isLast = i === 2;
+                    createThankYouImage(i, isLast ? showThankYouText : null);
                 }
+            }
 
-                // Show center text
+            function showThankYouText() {
+                // Show center text after images fade out
                 gsap.to(thankYouCenter, {
                     opacity: 1,
                     duration: 1,
                     ease: 'sine.out',
-                    delay: 0.3
+                    delay: 0.2
                 });
 
-                // Fade out after animation
+                // Fade out and return to form
                 setTimeout(function() {
                     gsap.to(thankYouCenter, {
                         opacity: 0,
@@ -621,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             contactForm.reset();
                         }
                     });
-                }, 2500);
+                }, 1500);
             }
         }
     }

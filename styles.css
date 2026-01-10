@@ -284,15 +284,17 @@ main {
 
 .thank-you-images {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
 }
 
 .thank-you-images img {
-    position: absolute;
     width: 100px;
     height: auto;
     opacity: 0;
