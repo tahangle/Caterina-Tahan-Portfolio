@@ -257,6 +257,14 @@ main {
 @media (max-width: 768px) {
     .submit-btn {
         opacity: 1 !important;
+        position: fixed !important;
+        bottom: 100px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: red !important;
+        color: white !important;
+        padding: 20px 40px !important;
+        z-index: 9999 !important;
     }
 }
 
