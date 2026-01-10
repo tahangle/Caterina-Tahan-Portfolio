@@ -484,9 +484,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 delay: 0.1 + (formGroups.length * 0.2) + 0.3
             });
 
-            // Thank you popup animation on click
-            const thankYouPopup = document.querySelector('.thank-you-popup');
-            const thankYouImage = document.querySelector('.thank-you-image');
+            // Thank you overlay animation on submit
+            const thankYouOverlay = document.querySelector('.thank-you-overlay');
+            const thankYouCenter = document.querySelector('.thank-you-center');
+            const thankYouImagesContainer = document.querySelector('.thank-you-images');
 
             // Gallery images for random selection
             const galleryImages = [
@@ -506,40 +507,94 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Images/Gallery/Group 25.png'
             ];
 
-            submitBtn.addEventListener('click', function(e) {
-                // Get button position
-                const rect = submitBtn.getBoundingClientRect();
-                const x = rect.left + rect.width / 2;
-                const y = rect.top - 20;
-
-                // Set random image
+            // Function to create animated image
+            function createThankYouImage(index) {
+                const img = document.createElement('img');
                 const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
-                thankYouImage.src = randomImage;
+                img.src = randomImage;
 
-                // Position popup above button
-                thankYouPopup.style.left = x + 'px';
-                thankYouPopup.style.top = y + 'px';
-                thankYouPopup.style.transform = 'translate(-50%, -100%)';
+                // Random position
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 100);
+                img.style.left = x + 'px';
+                img.style.top = y + 'px';
 
-                // Animate popup
-                gsap.fromTo(thankYouPopup,
-                    { opacity: 0, y: 10 },
-                    {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.5,
-                        ease: 'sine.out',
-                        onComplete: function() {
-                            gsap.to(thankYouPopup, {
-                                opacity: 0,
-                                y: -10,
-                                duration: 0.5,
-                                ease: 'sine.in',
-                                delay: 1.2
-                            });
-                        }
+                thankYouImagesContainer.appendChild(img);
+
+                // Animate in with delay
+                gsap.to(img, {
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'sine.out',
+                    delay: index * 0.08
+                });
+
+                // Fade out
+                gsap.to(img, {
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: 'sine.in',
+                    delay: index * 0.08 + 1.5,
+                    onComplete: function() {
+                        img.remove();
                     }
-                );
+                });
+            }
+
+            contactForm.addEventListener('submit', function(e) {
+                // Only show animation if form is valid
+                const inputs = contactForm.querySelectorAll('input, textarea');
+                let isValid = true;
+                inputs.forEach(input => {
+                    if (!input.validity.valid) {
+                        isValid = false;
+                    }
+                });
+
+                if (isValid) {
+                    e.preventDefault();
+
+                    // Show overlay
+                    thankYouOverlay.classList.add('active');
+                    gsap.to(thankYouOverlay, {
+                        opacity: 1,
+                        duration: 0.5,
+                        ease: 'sine.out'
+                    });
+
+                    // Create scattered images
+                    for (let i = 0; i < 12; i++) {
+                        createThankYouImage(i);
+                    }
+
+                    // Show center text
+                    gsap.to(thankYouCenter, {
+                        opacity: 1,
+                        duration: 1,
+                        ease: 'sine.out',
+                        delay: 0.3
+                    });
+
+                    // Fade out and submit form after animation
+                    setTimeout(function() {
+                        gsap.to(thankYouCenter, {
+                            opacity: 0,
+                            duration: 0.5,
+                            ease: 'sine.in'
+                        });
+                        gsap.to(thankYouOverlay, {
+                            opacity: 0,
+                            duration: 0.5,
+                            ease: 'sine.in',
+                            delay: 0.3,
+                            onComplete: function() {
+                                thankYouOverlay.classList.remove('active');
+                                // Actually submit the form
+                                contactForm.submit();
+                            }
+                        });
+                    }, 2500);
+                }
             });
         }
     }
