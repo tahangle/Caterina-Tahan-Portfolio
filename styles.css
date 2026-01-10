@@ -741,7 +741,10 @@ li {
     }
 
     .contact-page {
-        padding: 40px 30px;
+        padding: 40px 30px 100px;
+        display: block;
+        overflow-y: auto;
+        flex: 1;
     }
 
     .contact-form {
