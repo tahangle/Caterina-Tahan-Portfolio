@@ -257,14 +257,7 @@ main {
 @media (max-width: 768px) {
     .submit-btn {
         opacity: 1 !important;
-        position: fixed !important;
-        top: 100px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        background: red !important;
-        color: white !important;
-        padding: 20px 40px !important;
-        z-index: 9999 !important;
+        margin-top: 10px;
     }
 }
 
@@ -630,11 +623,6 @@ li {
         display: flex;
         flex-direction: column;
         padding-bottom: 0;
-        overflow: hidden;
-    }
-
-    body:has(.contact-page) {
-        overflow: auto;
     }
 
     .draw-prompt {
@@ -760,12 +748,16 @@ li {
     }
 
     .contact-page {
-        padding: 40px 30px 120px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        overflow-y: auto;
+        padding: 40px 30px 150px;
+        display: block;
+        overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
+        height: auto;
+        min-height: 100%;
+    }
+
+    .contact-page .contact-form {
+        margin: 0 auto;
     }
 
     .contact-form {
