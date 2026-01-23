@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="projects-page">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,31 +18,59 @@
     </header>
 
     <main class="projects-main">
-        <div class="projects-grid">
-            <!-- Project 1 - Sentient -->
-            <a href="sentient.html" class="project-item">
-                <img src="Images/Projects/Thumbnails/Sentient.gif" alt="Sentient" class="project-image">
-            </a>
-            <!-- Project 2 - The Anatomy of Portuguese Melancholy -->
-            <a href="anatomy.html" class="project-item">
-                <img src="Images/Projects/Thumbnails/Anatomy.gif" alt="The Anatomy of Portuguese Melancholy" class="project-image">
-            </a>
-            <!-- Project 3 - Grammaroli -->
-            <a href="grammaroli.html" class="project-item">
-                <img src="Images/Projects/Thumbnails/Grammaroli.gif" alt="Grammaroli" class="project-image">
-            </a>
-            <!-- Project 4 - Calendar Freedom of Press -->
-            <a href="stampa.html" class="project-item">
-                <img src="Images/Projects/Thumbnails/Calendar.gif" alt="Calendar Freedom of Press" class="project-image">
-            </a>
-            <!-- Project 5 - Pasaporte -->
-            <a href="pasaporte.html" class="project-item">
-                <img src="Images/Projects/Thumbnails/Pasaporte.gif" alt="Pasaporte" class="project-image">
-            </a>
-            <!-- Project 6 - Carthusia -->
-            <a href="carthusia.html" class="project-item">
-                <img src="Images/Projects/Thumbnails/Carthusia.gif" alt="Carthusia Jackie O Special Edition" class="project-image">
-            </a>
+        <div class="slideshow-container" id="slideshow">
+            <div class="slideshow-stack" id="slideshowStack">
+                <a href="grammaroli.html" class="slide-item" data-title="Grammaroli" data-meta="2020, Brand Identity & UI/UX"><img src="Images/Projects/Grammaroli/Grammaroli_02.png" alt="Grammaroli"></a>
+                <a href="sentient.html" class="slide-item" data-title="Sentient" data-meta="2022, Brand Identity & UI/UX"><img src="Images/Projects/Sentient/Sentient_11.gif" alt="Sentient"></a>
+                <a href="anatomy.html" class="slide-item" data-title="The Anatomy of Portuguese Melancholy" data-meta="2022, Editorial Design"><img src="Images/Projects/Anatomy/Anatomy_2.png" alt="Anatomy"></a>
+                <a href="stampa.html" class="slide-item" data-title="Calendar Freedom of Press" data-meta="2022, Editorial Design"><img src="Images/Projects/Stampa/Stampa_1.jpg" alt="Stampa"></a>
+                <a href="rione.html" class="slide-item" data-title="Rione Monte" data-meta="2024, Brand Identity & UI/UX"><img src="Images/Projects/Rione/BusinessCard_2.jpg" alt="Rione Monte"></a>
+                <a href="pasaporte.html" class="slide-item" data-title="Pasaporte" data-meta="2022, Editorial & UI Design"><img src="Images/Projects/Pasaporte/Pasaporte_01.png" alt="Pasaporte"></a>
+                <a href="grammaroli.html" class="slide-item" data-title="Grammaroli" data-meta="2020, Brand Identity & UI/UX"><img src="Images/Projects/Grammaroli/Grammaroli_03.png" alt="Grammaroli"></a>
+                <a href="sentient.html" class="slide-item" data-title="Sentient" data-meta="2022, Brand Identity & UI/UX"><img src="Images/Projects/Sentient/Sentient_8.png" alt="Sentient"></a>
+                <a href="stampa.html" class="slide-item" data-title="Calendar Freedom of Press" data-meta="2022, Editorial Design"><img src="Images/Projects/Stampa/Stampa_2.jpg" alt="Stampa"></a>
+                <a href="pasaporte.html" class="slide-item" data-title="Pasaporte" data-meta="2022, Editorial & UI Design"><img src="Images/Projects/Pasaporte/Pasaporte_03.png" alt="Pasaporte"></a>
+                <a href="grammaroli.html" class="slide-item" data-title="Grammaroli" data-meta="2020, Brand Identity & UI/UX"><img src="Images/Projects/Grammaroli/Grammaroli_04.png" alt="Grammaroli"></a>
+                <a href="anatomy.html" class="slide-item" data-title="The Anatomy of Portuguese Melancholy" data-meta="2022, Editorial Design"><img src="Images/Projects/Anatomy/Anatomy_4.png" alt="Anatomy"></a>
+                <a href="sentient.html" class="slide-item" data-title="Sentient" data-meta="2022, Brand Identity & UI/UX"><img src="Images/Projects/Sentient/Sentient_3.jpg" alt="Sentient"></a>
+                <a href="rione.html" class="slide-item" data-title="Rione Monte" data-meta="2024, Brand Identity & UI/UX"><img src="Images/Projects/Rione/PrimoPoster_1.jpg" alt="Rione Monte"></a>
+                <a href="stampa.html" class="slide-item" data-title="Calendar Freedom of Press" data-meta="2022, Editorial Design"><img src="Images/Projects/Stampa/Stampa_3.jpg" alt="Stampa"></a>
+                <a href="pasaporte.html" class="slide-item" data-title="Pasaporte" data-meta="2022, Editorial & UI Design"><img src="Images/Projects/Pasaporte/Pasaporte_05.png" alt="Pasaporte"></a>
+                <a href="grammaroli.html" class="slide-item" data-title="Grammaroli" data-meta="2020, Brand Identity & UI/UX"><img src="Images/Projects/Grammaroli/Grammaroli_05.png" alt="Grammaroli"></a>
+                <a href="sentient.html" class="slide-item" data-title="Sentient" data-meta="2022, Brand Identity & UI/UX"><img src="Images/Projects/Sentient/Sentient_5.jpg" alt="Sentient"></a>
+            </div>
+            <div class="slideshow-info" id="slideshowInfo">
+                <span class="slideshow-title"></span>
+                <span class="slideshow-meta"></span>
+            </div>
+            <div class="view-toggles">
+                <button class="view-toggle active" id="slideshowToggle" title="Slideshow view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="10" height="10"/>
+                    </svg>
+                </button>
+                <button class="view-toggle" id="gridToggle" title="Grid view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="1" y="1" width="14" height="14"/>
+                        <line x1="8" y1="1" x2="8" y2="15"/>
+                        <line x1="1" y1="8" x2="15" y2="8"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-arrows">
+                <button class="mobile-arrow mobile-arrow-prev" id="prevArrow">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1">
+                        <line x1="12" y1="4" x2="6" y2="10"/>
+                        <line x1="6" y1="10" x2="12" y2="16"/>
+                    </svg>
+                </button>
+                <button class="mobile-arrow mobile-arrow-next" id="nextArrow">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1">
+                        <line x1="8" y1="4" x2="14" y2="10"/>
+                        <line x1="14" y1="10" x2="8" y2="16"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </main>
 

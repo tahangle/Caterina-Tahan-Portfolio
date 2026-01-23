@@ -270,7 +270,224 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ==== PROJECTS PAGE ====
+    // ==== PROJECTS PAGE - SLIDESHOW ====
+    const slideshowStack = document.getElementById('slideshowStack');
+    if (slideshowStack) {
+        const items = slideshowStack.querySelectorAll('.slide-item');
+        const infoContainer = document.getElementById('slideshowInfo');
+        const titleEl = infoContainer.querySelector('.slideshow-title');
+        const metaEl = infoContainer.querySelector('.slideshow-meta');
+
+        let currentIndex = 0;
+        const totalItems = items.length;
+        let isAnimating = false;
+        let autoPlaySpeed = 2500;
+        let autoPlayTimer = null;
+        let isPaused = false;
+        let zCounter = 100;
+
+        // Initialize all items - hide them
+        items.forEach((item, i) => {
+            gsap.set(item, {
+                opacity: 0,
+                x: 100,
+                zIndex: i
+            });
+        });
+
+        // Show first item
+        gsap.set(items[0], { opacity: 1, x: 0 });
+        items[0].classList.add('active');
+
+        function goToNext() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const currentItem = items[currentIndex];
+            const nextIndex = (currentIndex + 1) % totalItems;
+            const nextItem = items[nextIndex];
+
+            zCounter++;
+            gsap.set(nextItem, { zIndex: zCounter });
+
+            // Slide current out to left, next in from right
+            gsap.to(currentItem, {
+                x: -100,
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    currentItem.classList.remove('active');
+                }
+            });
+
+            gsap.fromTo(nextItem,
+                { x: 100, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        nextItem.classList.add('active');
+                        currentIndex = nextIndex;
+                        isAnimating = false;
+                    }
+                }
+            );
+        }
+
+        function goToPrev() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const currentItem = items[currentIndex];
+            const prevIndex = (currentIndex - 1 + totalItems) % totalItems;
+            const prevItem = items[prevIndex];
+
+            zCounter++;
+            gsap.set(prevItem, { zIndex: zCounter });
+
+            // Slide current out to right, prev in from left
+            gsap.to(currentItem, {
+                x: 100,
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    currentItem.classList.remove('active');
+                }
+            });
+
+            gsap.fromTo(prevItem,
+                { x: -100, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        prevItem.classList.add('active');
+                        currentIndex = prevIndex;
+                        isAnimating = false;
+                    }
+                }
+            );
+        }
+
+        // Auto-play
+        function startAutoPlay() {
+            autoPlayTimer = setInterval(() => {
+                if (!isPaused) goToNext();
+            }, autoPlaySpeed);
+        }
+
+        startAutoPlay();
+
+        // Hover - pause and show info
+        items.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                isPaused = true;
+                titleEl.textContent = item.dataset.title;
+                metaEl.textContent = item.dataset.meta;
+                gsap.to(infoContainer, { opacity: 1, duration: 0.3 });
+            });
+            item.addEventListener('mouseleave', () => {
+                isPaused = false;
+                gsap.to(infoContainer, { opacity: 0, duration: 0.3 });
+            });
+        });
+
+        // Scroll/wheel navigation (works even with overflow hidden)
+        let isGridView = false;
+        let canScroll = true;
+
+        window.addEventListener('wheel', (e) => {
+            if (isGridView) return; // Allow normal scroll in grid view
+            e.preventDefault();
+
+            if (!canScroll || isAnimating) return;
+
+            // Combine vertical and horizontal scroll
+            const delta = e.deltaY + e.deltaX;
+
+            if (Math.abs(delta) >= 30) {
+                canScroll = false;
+                clearInterval(autoPlayTimer);
+
+                if (delta > 0) {
+                    goToNext();
+                } else {
+                    goToPrev();
+                }
+
+                // Cooldown before next scroll
+                setTimeout(() => {
+                    canScroll = true;
+                }, 600);
+
+                setTimeout(() => startAutoPlay(), 2000);
+            }
+        }, { passive: false });
+
+        // View toggles
+        const gridToggle = document.getElementById('gridToggle');
+        const slideshowToggle = document.getElementById('slideshowToggle');
+        const slideshowContainer = document.getElementById('slideshow');
+
+        function switchToGrid() {
+            isGridView = true;
+            slideshowContainer.classList.add('grid-view');
+            gridToggle.classList.add('active');
+            slideshowToggle.classList.remove('active');
+            clearInterval(autoPlayTimer);
+            // Show all items in grid
+            items.forEach(item => {
+                gsap.set(item, { opacity: 1, x: 0 });
+            });
+        }
+
+        function switchToSlideshow() {
+            isGridView = false;
+            slideshowContainer.classList.remove('grid-view');
+            slideshowToggle.classList.add('active');
+            gridToggle.classList.remove('active');
+            // Reset to slideshow
+            items.forEach((item, i) => {
+                if (i === currentIndex) {
+                    gsap.set(item, { opacity: 1, x: 0 });
+                    item.classList.add('active');
+                } else {
+                    gsap.set(item, { opacity: 0, x: 100 });
+                    item.classList.remove('active');
+                }
+            });
+            startAutoPlay();
+        }
+
+        gridToggle.addEventListener('click', switchToGrid);
+        slideshowToggle.addEventListener('click', switchToSlideshow);
+
+        // Mobile arrows
+        const prevArrow = document.getElementById('prevArrow');
+        const nextArrow = document.getElementById('nextArrow');
+
+        if (prevArrow && nextArrow) {
+            prevArrow.addEventListener('click', () => {
+                clearInterval(autoPlayTimer);
+                goToPrev();
+                setTimeout(() => startAutoPlay(), 2000);
+            });
+
+            nextArrow.addEventListener('click', () => {
+                clearInterval(autoPlayTimer);
+                goToNext();
+                setTimeout(() => startAutoPlay(), 2000);
+            });
+        }
+    }
+
+    // ==== PROJECTS PAGE - GRID (legacy) ====
     const projectsGrid = document.querySelector('.projects-grid');
     if (projectsGrid) {
         gsap.to(projectsGrid, {
@@ -341,6 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const projectGallery = document.getElementById('projectGallery');
     const galleryCursor = document.getElementById('galleryCursor');
 
+    // ==== STANDARD PROJECT GALLERY (slides) ====
     if (projectGallery && galleryCursor) {
         const slides = projectGallery.querySelectorAll('.gallery-slide');
         let currentSlide = 0;
@@ -451,37 +669,29 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Staggered fade-in for form groups and line trace animation
+        // Staggered fade-in like about page
         formGroups.forEach((group, index) => {
-            const inputLine = group.querySelector('.input-line');
-            const baseDelay = 0.1 + (index * 0.2);
-
-            // Fade in the form group (label + input)
             gsap.to(group, {
                 opacity: 1,
-                duration: 1.4,
-                ease: 'sine.out',
-                delay: baseDelay
+                duration: 1.2,
+                ease: 'power2.out',
+                delay: 0.1 + (index * 0.15)
             });
 
-            // Trace the line from left to right
+            // Show lines immediately
+            const inputLine = group.querySelector('.input-line');
             if (inputLine) {
-                gsap.to(inputLine, {
-                    scaleX: 1,
-                    duration: 1,
-                    ease: 'sine.inOut',
-                    delay: baseDelay + 0.3
-                });
+                gsap.set(inputLine, { scaleX: 1 });
             }
         });
 
-        // Fade in submit button after form groups
+        // Fade in submit button
         if (submitBtn) {
             gsap.to(submitBtn, {
                 opacity: 1,
-                duration: 1.4,
-                ease: 'sine.out',
-                delay: 0.1 + (formGroups.length * 0.2) + 0.3
+                duration: 1.2,
+                ease: 'power2.out',
+                delay: 0.1 + (formGroups.length * 0.15) + 0.1
             });
 
             // Thank you overlay animation on submit

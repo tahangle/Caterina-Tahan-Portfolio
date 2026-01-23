@@ -157,18 +157,31 @@ main {
 .contact-page {
     padding: 80px 60px 60px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
 }
 
 .contact-form {
     width: 100%;
-    max-width: 500px;
+    max-width: 800px;
+}
+
+.form-row {
+    display: flex;
+    gap: 60px;
+}
+
+.form-row .form-group {
+    flex: 1;
 }
 
 .form-group {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     opacity: 0;
+}
+
+.form-group-message {
+    max-width: 500px;
 }
 
 .form-group label {
@@ -206,8 +219,6 @@ main {
     width: 100%;
     height: 1px;
     background: #000;
-    transform: scaleX(0);
-    transform-origin: left;
     pointer-events: none;
 }
 
@@ -365,17 +376,50 @@ h2 {
 
 footer {
     position: fixed;
-    bottom: 20px;
-    right: 60px;
+    bottom: 30px;
+    left: 60px;
     font-family: 'TimesNow', serif;
     font-size: 12px;
     font-weight: 200;
     color: #000;
     z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards;
+    animation-delay: 0.5s;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
 footer p {
     margin: 0;
+}
+
+.footer-social {
+    position: fixed;
+    bottom: 30px;
+    right: 60px;
+    display: flex;
+    gap: 20px;
+    font-family: 'TimesNow', serif;
+    font-size: 12px;
+    font-weight: 200;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards;
+    animation-delay: 0.5s;
+}
+
+.footer-social a {
+    color: #000;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.footer-social a:hover {
+    opacity: 0.5;
 }
 
 ul {
@@ -413,28 +457,160 @@ li {
 
 /* Projects Page */
 .projects-main {
-    padding: 60px;
+    padding: 0;
+    height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    opacity: 0;
+html.projects-page,
+html.projects-page body {
+    overflow: hidden;
 }
 
-.project-item {
+/* Slideshow Stack */
+.slideshow-container {
     position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slideshow-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-item {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
     cursor: pointer;
     text-decoration: none;
-    display: block;
 }
 
-.project-item .project-image {
+.slide-item.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.slide-item img {
+    max-width: 35vw;
+    max-height: 45vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.slideshow-info {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 3px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+.slideshow-title {
+    font-family: 'TimesNow', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #000;
+}
+
+.slideshow-meta {
+    font-family: 'TimesNow', serif;
+    font-size: 12px;
+    color: #666;
+}
+
+.view-toggles {
+    position: fixed;
+    bottom: 30px;
+    right: 60px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards;
+    animation-delay: 0.5s;
+}
+
+.view-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #000;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.view-toggle:hover {
+    opacity: 0.6;
+}
+
+.view-toggle.active {
+    opacity: 1;
+}
+
+/* Mobile arrows - hidden on desktop */
+.mobile-arrows {
+    display: none;
+}
+
+/* Grid View */
+.slideshow-container.grid-view .slideshow-stack {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 40px 60px;
+    overflow: hidden;
+    align-content: start;
+}
+
+.slideshow-container.grid-view .slide-item {
+    position: relative;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Only show first 8 items (2 rows) in grid view */
+.slideshow-container.grid-view .slide-item:nth-child(n+9) {
+    display: none;
+}
+
+.slideshow-container.grid-view .slide-item img {
+    max-width: 100%;
+    max-height: 100%;
     width: 100%;
     height: auto;
-    display: block;
-    transition: opacity 0.3s ease;
+}
+
+.slideshow-container.grid-view .slideshow-info {
+    display: none;
+}
+
+.project-item:hover .project-image {
+    opacity: 0.7;
 }
 
 .project-video .project-image {
@@ -494,25 +670,26 @@ li {
 
 .project-content {
     display: flex;
-    min-height: 100vh;
+    min-height: calc(100vh - 60px);
 }
 
 .project-info {
     width: 50%;
-    padding: 80px 60px;
+    padding: 120px 60px 60px 60px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .project-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 80px;
+    white-space: nowrap;
 }
 
 .project-columns {
     display: flex;
-    gap: 60px;
+    gap: 40px;
 }
 
 .project-column {
@@ -523,9 +700,9 @@ li {
     font-family: 'TimesNow', serif;
     font-size: 14px;
     font-weight: 300;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     color: #000;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .project-meta {
@@ -533,7 +710,7 @@ li {
     font-size: 14px;
     font-weight: 300;
     color: #000;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .project-column h2 {
@@ -548,11 +725,10 @@ li {
     width: 50%;
     position: fixed;
     right: 0;
-    top: 0;
-    height: 100vh;
+    top: 60px;
+    height: calc(100vh - 60px);
     cursor: none;
     z-index: 1;
-    padding: 80px 60px;
 }
 
 .gallery-slide {
@@ -563,6 +739,10 @@ li {
     left: 0;
     opacity: 0;
     transition: opacity 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 100px;
 }
 
 .gallery-slide.active {
@@ -570,16 +750,17 @@ li {
 }
 
 .gallery-slide img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     display: block;
 }
 
 .gallery-slide-duo {
     display: flex;
-    gap: 30px;
-    padding: 80px;
+    gap: 20px;
 }
 
 .gallery-slide-duo.active {
@@ -587,8 +768,27 @@ li {
 }
 
 .gallery-slide-duo img {
-    width: 50%;
-    height: 100%;
+    flex: 1;
+    max-width: 50%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.gallery-slide-multi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery-slide-multi.active {
+    display: flex;
+}
+
+.gallery-slide-multi img {
+    max-height: 45%;
+    width: auto;
     object-fit: contain;
 }
 
@@ -599,18 +799,17 @@ li {
 }
 
 .gallery-cursor {
-    position: fixed;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'TimesNow', serif;
     font-size: 14px;
     font-weight: 200;
     pointer-events: none;
     z-index: 1000;
-    display: none;
 }
 
-.project-gallery:hover .gallery-cursor {
-    display: block;
-}
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
@@ -690,12 +889,39 @@ li {
     }
 
     .projects-main {
-        padding: 40px 30px;
+        padding: 40px 20px;
     }
 
+    .scrapbook-stack {
+        width: 80vw;
+        height: 50vh;
+    }
+
+    .scrapbook-item img {
+        max-width: 75vw;
+        max-height: 45vh;
+    }
+
+    .scrapbook-info {
+        left: 20px;
+        top: auto;
+        bottom: 80px;
+        transform: none;
+    }
+
+    .scrapbook-counter {
+        bottom: 20px;
+    }
+
+
     .projects-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 60px 40px;
+    }
+
+    .project-item .project-image {
+        max-width: 160px;
+        max-height: 160px;
     }
 
     .project-detail {
@@ -709,37 +935,37 @@ li {
 
     .project-info {
         width: 100%;
-        padding: 0;
-        display: contents;
+        padding: 30px;
     }
 
     .project-header {
-        width: 100%;
-        padding: 40px 30px;
         text-align: center;
-        margin-bottom: 0;
-        order: 1;
+        margin-bottom: 30px;
     }
 
     .project-gallery {
         width: 100%;
         position: relative;
-        height: 60vh;
-        order: 2;
-        margin: 0 30px;
-        width: calc(100% - 60px);
+        height: 50vh;
+        top: 0;
+    }
+
+    .gallery-slide {
+        padding: 20px;
+    }
+
+    .gallery-slide img {
+        max-width: 90%;
+        max-height: 90%;
     }
 
     .project-columns {
-        width: 100%;
-        padding: 40px 30px;
         flex-direction: column;
         gap: 30px;
-        order: 3;
     }
 
     .gallery-cursor {
-        display: block;
+        top: 15px;
     }
 
     footer {
@@ -766,7 +992,74 @@ li {
         max-width: 100%;
     }
 
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
     .form-group {
         margin-bottom: 25px;
+    }
+
+    .form-group-message {
+        max-width: 100%;
+    }
+
+    /* Mobile slideshow */
+    .slide-item img {
+        max-width: 70vw;
+        max-height: 50vh;
+    }
+
+    /* Mobile footer */
+    footer {
+        bottom: 20px;
+        left: 30px;
+    }
+
+    .footer-social {
+        bottom: 20px;
+        right: 30px;
+        gap: 15px;
+    }
+
+    /* Mobile view toggles */
+    .view-toggles {
+        bottom: 20px;
+        right: 30px;
+    }
+
+    /* Mobile arrows */
+    .mobile-arrows {
+        display: flex;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        gap: 40px;
+        z-index: 100;
+        opacity: 0;
+        animation: fadeIn 1.2s ease forwards;
+        animation-delay: 0.5s;
+    }
+
+    .mobile-arrow {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        color: #000;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-arrow:hover,
+    .mobile-arrow:active {
+        opacity: 1;
+    }
+
+    /* Hide view toggles on mobile in slideshow mode */
+    .slideshow-container:not(.grid-view) .view-toggles {
+        display: none;
     }
 }
