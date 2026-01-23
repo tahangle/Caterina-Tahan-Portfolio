@@ -824,6 +824,12 @@ html.projects-page body {
     font-weight: 200;
 }
 
+/* Hide footer on project detail pages */
+body:has(.project-detail) footer,
+body:has(.project-detail) .footer-social {
+    display: none;
+}
+
 .project-nav a {
     color: #000;
     text-decoration: none;
