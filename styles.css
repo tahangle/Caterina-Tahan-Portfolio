@@ -596,6 +596,7 @@ html.projects-page body {
     position: relative;
     opacity: 1;
     pointer-events: auto;
+    padding: 60px;
 }
 
 /* Only show first 8 items (2 rows) in grid view */
