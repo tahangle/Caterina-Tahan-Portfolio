@@ -824,19 +824,10 @@ html.projects-page body {
     font-weight: 200;
 }
 
-/* Hide footer on project detail pages */
-body:has(.project-detail) footer,
-body:has(.project-detail) .footer-social {
-    display: none;
-}
-
 .project-nav a {
     color: #000;
     text-decoration: none;
     transition: opacity 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 .project-nav a:hover {
@@ -844,11 +835,11 @@ body:has(.project-detail) .footer-social {
 }
 
 .project-nav-prev::before {
-    content: '←';
+    content: '← ';
 }
 
 .project-nav-next::after {
-    content: '→';
+    content: ' →';
 }
 
 
