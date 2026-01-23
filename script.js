@@ -447,33 +447,47 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Grid view hover effects
+        // Grid view hover effects - fast slideshow preview
         items.forEach(item => {
+            let hoverInterval = null;
+            let galleryIndex = 0;
+            const img = item.querySelector('img');
+            const originalSrc = img.src;
+            const galleryData = item.dataset.gallery;
+            const galleryImages = galleryData ? galleryData.split(',') : [];
+
             item.addEventListener('mouseenter', () => {
-                if (isGridView) {
-                    gsap.to(item, {
-                        scale: 1.03,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                    });
-                    gsap.to(item.querySelector('img'), {
-                        opacity: 0.85,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                    });
+                if (isGridView && galleryImages.length > 1) {
+                    galleryIndex = 0;
+                    // Fast cycle through images
+                    hoverInterval = setInterval(() => {
+                        galleryIndex = (galleryIndex + 1) % galleryImages.length;
+                        gsap.to(img, {
+                            opacity: 0,
+                            duration: 0.1,
+                            onComplete: () => {
+                                img.src = galleryImages[galleryIndex];
+                                gsap.to(img, { opacity: 1, duration: 0.1 });
+                            }
+                        });
+                    }, 300);
                 }
             });
+
             item.addEventListener('mouseleave', () => {
                 if (isGridView) {
-                    gsap.to(item, {
-                        scale: 1,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                    });
-                    gsap.to(item.querySelector('img'), {
-                        opacity: 1,
-                        duration: 0.3,
-                        ease: 'power2.out'
+                    if (hoverInterval) {
+                        clearInterval(hoverInterval);
+                        hoverInterval = null;
+                    }
+                    // Return to original image
+                    gsap.to(img, {
+                        opacity: 0,
+                        duration: 0.1,
+                        onComplete: () => {
+                            img.src = originalSrc;
+                            gsap.to(img, { opacity: 1, duration: 0.1 });
+                        }
                     });
                 }
             });
