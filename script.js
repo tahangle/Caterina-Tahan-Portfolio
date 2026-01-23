@@ -443,9 +443,41 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(autoPlayTimer);
             // Show all items in grid
             items.forEach(item => {
-                gsap.set(item, { opacity: 1, x: 0 });
+                gsap.set(item, { opacity: 1, x: 0, scale: 1 });
             });
         }
+
+        // Grid view hover effects
+        items.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                if (isGridView) {
+                    gsap.to(item, {
+                        scale: 1.03,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                    gsap.to(item.querySelector('img'), {
+                        opacity: 0.85,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                }
+            });
+            item.addEventListener('mouseleave', () => {
+                if (isGridView) {
+                    gsap.to(item, {
+                        scale: 1,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                    gsap.to(item.querySelector('img'), {
+                        opacity: 1,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                }
+            });
+        });
 
         function switchToSlideshow() {
             isGridView = false;
