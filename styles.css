@@ -819,6 +819,8 @@ html.projects-page body {
     display: flex;
     justify-content: space-between;
     padding: 40px 60px;
+    margin-top: 40px;
+    border-top: 1px solid #000;
     font-family: 'TimesNow', serif;
     font-size: 14px;
     font-weight: 200;
@@ -830,7 +832,7 @@ html.projects-page body {
     transition: opacity 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .project-nav a:hover {
@@ -1005,30 +1007,12 @@ html.projects-page body {
     }
 
     .project-nav {
-        position: fixed;
-        bottom: 50px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 0;
-        gap: 50px;
-        z-index: 50;
-        background: rgba(255,255,255,0.95);
-        padding: 10px 20px;
-        border-radius: 20px;
+        padding: 30px;
+        margin-top: 30px;
     }
 
     .project-nav a {
-        font-size: 11px;
-    }
-
-    .project-nav-prev::before {
-        content: '‹';
-        font-size: 16px;
-    }
-
-    .project-nav-next::after {
-        content: '›';
-        font-size: 16px;
+        font-size: 12px;
     }
 
     footer {
