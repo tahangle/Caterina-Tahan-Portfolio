@@ -1017,10 +1017,15 @@ html.projects-page body {
         left: 30px;
     }
 
+    footer p .rights-reserved {
+        display: none;
+    }
+
     .footer-social {
         bottom: 20px;
         right: 30px;
         gap: 15px;
+        font-size: 12px;
     }
 
     /* Mobile view toggles */
