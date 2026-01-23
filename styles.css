@@ -1006,25 +1006,29 @@ html.projects-page body {
 
     .project-nav {
         position: fixed;
-        bottom: 60px;
-        left: 0;
-        right: 0;
-        padding: 0 30px;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0;
+        gap: 50px;
         z-index: 50;
+        background: rgba(255,255,255,0.95);
+        padding: 10px 20px;
+        border-radius: 20px;
     }
 
     .project-nav a {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .project-nav-prev::before {
         content: '‹';
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .project-nav-next::after {
         content: '›';
-        font-size: 18px;
+        font-size: 16px;
     }
 
     footer {
