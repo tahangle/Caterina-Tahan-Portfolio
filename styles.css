@@ -398,6 +398,10 @@ footer p {
     margin: 0;
 }
 
+footer p br {
+    display: none;
+}
+
 .footer-social {
     position: fixed;
     bottom: 30px;
@@ -1048,10 +1052,15 @@ html.projects-page body {
     footer {
         bottom: 20px;
         left: 30px;
+        font-size: 12px;
+    }
+
+    footer p br {
+        display: block;
     }
 
     footer p .rights-reserved {
-        display: none;
+        display: block;
     }
 
     .footer-social {
