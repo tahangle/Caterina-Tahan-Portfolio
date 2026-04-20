@@ -1,0 +1,138 @@
+{
+  "nav": {
+    "about": "À propos",
+    "projects": "Projets",
+    "contact": "Contact"
+  },
+  "footer": {
+    "copyright": "© 2025 Caterina Tahan.",
+    "rights": "Tous droits réservés."
+  },
+  "home": {
+    "drawPrompt": "dessinez ici",
+    "centerText": "maintenant vous me connaissez.",
+    "clickMore": "<span class=\"bold-text\">cliquez</span> pour en savoir plus"
+  },
+  "about": {
+    "intro1": "Je suis Caterina, Designer Digital. Entre le Venezuela, le Portugal et l'Italie, j'ai développé un amour pour le multiculturalisme, la communication et l'art — une passion qui m'a menée vers une Licence en Design Graphique à l'Académie des Beaux-Arts de Rome (2018–2021).",
+    "intro2": "Je suis actuellement basée à Paris.",
+    "servicesTitle": "Services",
+    "services": {
+      "creative": "Développement Créatif",
+      "uiux": "Design UI/UX",
+      "brand": "Design de Marque",
+      "editorial": "Design Éditorial"
+    },
+    "contactTitle": "Contact"
+  },
+  "contact": {
+    "nameLabel": "Nom",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
+    "sendBtn": "Envoyer",
+    "errorRequired": "Veuillez remplir ce champ",
+    "errorEmail": "Veuillez entrer un email valide",
+    "thankYou": "Merci."
+  },
+  "projects": {
+    "slideshowView": "Vue diaporama",
+    "gridView": "Vue grille"
+  },
+  "projectMeta": {
+    "grammaroli": {
+      "title": "Grammaroli",
+      "meta": "2020, Identité de Marque & UI/UX"
+    },
+    "sentient": {
+      "title": "Sentient",
+      "meta": "2022, Identité de Marque & UI/UX"
+    },
+    "anatomy": {
+      "title": "L'Anatomie de la Mélancolie Portugaise",
+      "meta": "2022, Design Éditorial"
+    },
+    "stampa": {
+      "title": "Calendrier Liberté de la Presse",
+      "meta": "2022, Design Éditorial"
+    },
+    "rione": {
+      "title": "Rione Monti",
+      "meta": "2024, Identité de Marque & UI/UX"
+    },
+    "pasaporte": {
+      "title": "Pasaporte",
+      "meta": "2022, Design Éditorial & UI"
+    }
+  },
+  "projectDetails": {
+    "grammaroli": {
+      "title": "Grammaroli.",
+      "meta": "2020. Identité de Marque & UI/UX.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Ce projet a consisté en le rebranding, la rédaction et la conception du site web de Grammaroli, une entreprise artisanale italienne spécialisée dans le travail du marbre, dont le siège et l'atelier se trouvent à Rome, Via dei Reti, 21.",
+      "conceptTitle": "CONCEPT",
+      "concept": "Le concept avait pour objectif de mettre en valeur le rôle primordial du matériau dans la construction de Rome comme capitale du monde à travers son art : « Rome caput mundi, Grammaroli caput Rome ». Pour sa réalisation, l'élégance et le classicisme des sculptures romaines se mêlent à une typographie moderne pour donner naissance à la nouvelle image de Grammaroli."
+    },
+    "sentient": {
+      "title": "Sentient.",
+      "meta": "2022. Identité de Marque & UI/UX.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Sentient est une application mobile conçue pour sensibiliser les utilisateurs aux questions de genre à travers une interface intuitive et des fonctionnalités d'appel vidéo. Le projet a été développé dans le cadre d'un projet universitaire à l'étranger à l'Escola Superior de Artes e Design.",
+      "conceptTitle": "CONCEPT",
+      "concept": "Le design met l'accent sur l'empathie à travers une esthétique non-genrée et une typographie audacieuse. L'application crée un espace sécurisé pour l'apprentissage et la discussion, permettant aux utilisateurs de se connecter avec des éducateurs et des experts sur des sujets liés au genre grâce à une communication vidéo fluide."
+    },
+    "anatomy": {
+      "title": "L'Anatomie de la Mélancolie Portugaise.",
+      "meta": "2022. Design Éditorial.",
+      "overviewTitle": "APERÇU",
+      "overview1": "Ce projet a constitué l'aboutissement de mes études de premier cycle à l'Académie des Beaux-Arts de Rome, avec des contraintes minimales au-delà de la réflexion sur les intérêts personnels et la croissance académique.",
+      "overview2": "Suite à une année à l'étranger à Porto, la recherche s'est concentrée sur la compréhension des racines culturelles de la mélancolie portugaise, examinant les mythes, les mémoires et la culture pour comprendre comment le passé d'une nation influence son identité et son caractère présents.",
+      "conceptTitle": "CONCEPT",
+      "concept1": "L'identité est une image dans laquelle le présent domine la scène, mais le passé dicte le destin.",
+      "concept2": "Cette exploration plonge dans la façon dont l'identité nationale est façonnée par des éléments historiques et culturels, retraçant les fils de mélancolie qui tissent la culture portugaise et examinant comment ces courants émotionnels souterrains définissent un caractère collectif à travers les générations."
+    },
+    "stampa": {
+      "title": "Calendrier « Liberté de la Presse ».",
+      "meta": "2022. Design Éditorial.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Le concours annuel Tipografare demandait aux participants de concevoir un calendrier abordant le thème de « l'imprimé » avec des contraintes minimales au-delà des exigences de format, permettant une liberté d'interprétation créative.",
+      "conceptTitle": "CONCEPT",
+      "concept1": "La designer est allée au-delà de l'imagerie typique liée à l'imprimé. S'inspirant de la perspective de Gustave Flaubert sur la censure, le projet explore « Libertà di Stampa » (Liberté de la Presse) en représentant la censure comme une attaque contre l'esprit humain.",
+      "concept2": "L'exécution a utilisé des matériaux non conventionnels et des papiers du quotidien pour simuler des techniques analogiques antérieures à l'imprimerie moderne, notamment la typographie, le Decadry et les méthodes de collage. Le projet a reçu la deuxième place dans la compétition."
+    },
+    "rione": {
+      "title": "Rione Monti.",
+      "meta": "2024. Identité de Marque & UI/UX.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Rione Monti est un service de traiteur italien basé à Paris, spécialisé dans la cuisine romaine authentique. Le brief demandait une identité de marque complète et une présence digitale qui transmettrait la chaleur de l'hospitalité italienne tout en séduisant un public français.",
+      "conceptTitle": "CONCEPT",
+      "concept": "L'identité visuelle s'inspire de la riche iconographie des quartiers romains — les rioni. Une palette de terracotta chaude associée à des illustrations classiques crée une esthétique accueillante mais raffinée. Le système de design s'étend aux menus, aux réseaux sociaux et aux supports imprimés, équilibrant tradition et sensibilité contemporaine."
+    },
+    "pasaporte": {
+      "title": "Pasaporte.",
+      "meta": "2022. Design Éditorial et Design UI.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Ce brief de Design Éditorial consistait en l'idéation d'un concept et du design d'un journal hypothétique qui aborderait les questions métropolitaines.",
+      "conceptTitle": "CONCEPT",
+      "concept1": "Ma solution était Pasaporte, un journal né avec l'intention de rassembler le répertoire iconographique des villes. Pasaporte vise à esquisser et motiver les origines et les conséquences derrière certaines des images mentales qui sont universellement et, souvent inconsciemment, liées à certaines régions.",
+      "concept2": "À partir de cette idée, un Magazine inséré a été conçu pour servir d'étude approfondie d'un territoire à travers le travail de photographes qui capturent le répertoire iconographique du lieu. Les clichés de Leandro Colantoni du territoire sicilien, les représentations de l'iconographie religieuse mexicaine par Juan Brenner et la réflexion sur les marges du rêve américain à travers l'objectif de Bryan Schutmaat ; ce ne sont là que quelques-unes des inspirations sur lesquelles le projet a été construit."
+    },
+    "carthusia": {
+      "title": "Carthusia. Édition Spéciale Jackie 'O.",
+      "meta": "2020. Identité de Marque & Design Packaging.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Ce projet consistait à concevoir un packaging de parfum de luxe pour Carthusia, une marque de parfums prestigieuse. Le design a été créé pour le concours One More Pack 2020.",
+      "conceptTitle": "CONCEPT",
+      "concept": "Le design du packaging s'inspire de la sensibilité artistique et de l'élégance intemporelle de Jacqueline Onassis. L'édition spéciale capture l'essence de la sophistication et de la beauté classique qui définissaient le style iconique de Jackie O, traduisant ces qualités en une expérience de déballage luxueuse."
+    },
+    "manonGuilbert": {
+      "title": "Portfolio Manon Guilbert.",
+      "meta": "2025. Identité de Marque, Design UI et Développement Web.",
+      "briefingTitle": "BRIEF",
+      "briefing": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "conceptTitle": "CONCEPT",
+      "concept1": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "concept2": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+    }
+  }
+}

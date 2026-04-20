@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 duration: 0.5,
                                 ease: 'power2.out',
                                 onComplete: function() {
-                                    centerText.innerHTML = '<span class="bold-text">click</span> to know more';
+                                    centerText.innerHTML = window.i18n ? window.i18n.t('home.clickMore') : '<span class="bold-text">click</span> to know more';
                                     gsap.to(centerText, {
                                         opacity: 1,
                                         duration: 1,
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 duration: 0.5,
                                 ease: 'power2.out',
                                 onComplete: function() {
-                                    centerText.innerHTML = '<span class="bold-text">click</span> to know more';
+                                    centerText.innerHTML = window.i18n ? window.i18n.t('home.clickMore') : '<span class="bold-text">click</span> to know more';
                                     gsap.to(centerText, {
                                         opacity: 1,
                                         duration: 1,
@@ -299,6 +299,27 @@ document.addEventListener('DOMContentLoaded', function() {
         gsap.set(items[0], { opacity: 1, x: 0 });
         items[0].classList.add('active');
 
+        // Projects index
+        const projectsIndex = document.getElementById('projectsIndex');
+        const indexItems = projectsIndex ? projectsIndex.querySelectorAll('.index-item') : [];
+
+        function updateProjectsIndex() {
+            if (!projectsIndex) return;
+            const currentItem = items[currentIndex];
+            const currentHref = currentItem.getAttribute('href');
+
+            indexItems.forEach(indexItem => {
+                if (indexItem.getAttribute('href') === currentHref) {
+                    indexItem.classList.add('active');
+                } else {
+                    indexItem.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize index
+        updateProjectsIndex();
+
         function goToNext() {
             if (isAnimating) return;
             isAnimating = true;
@@ -332,6 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         nextItem.classList.add('active');
                         currentIndex = nextIndex;
                         isAnimating = false;
+                        updateProjectsIndex();
                     }
                 }
             );
@@ -370,6 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         prevItem.classList.add('active');
                         currentIndex = prevIndex;
                         isAnimating = false;
+                        updateProjectsIndex();
                     }
                 }
             );
@@ -441,9 +464,19 @@ document.addEventListener('DOMContentLoaded', function() {
             gridToggle.classList.add('active');
             slideshowToggle.classList.remove('active');
             clearInterval(autoPlayTimer);
-            // Show all items in grid
+            // Show all items in grid and add hover info
             items.forEach(item => {
                 gsap.set(item, { opacity: 1, x: 0, scale: 1 });
+                // Add hover info if not already present
+                if (!item.querySelector('.grid-hover-info')) {
+                    const hoverInfo = document.createElement('div');
+                    hoverInfo.className = 'grid-hover-info';
+                    hoverInfo.innerHTML = `
+                        <span class="grid-title">${item.getAttribute('data-title')}</span>
+                        <span class="grid-meta">${item.getAttribute('data-meta')}</span>
+                    `;
+                    item.appendChild(hoverInfo);
+                }
             });
         }
 
@@ -663,68 +696,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==== CONTACT PAGE ====
     const contactPage = document.querySelector('.contact-page');
     if (contactPage) {
-        const contactForm = contactPage.querySelector('.contact-form');
-        const formGroups = contactPage.querySelectorAll('.form-group');
-        const submitBtn = contactPage.querySelector('.submit-btn');
+        const contactIntro = contactPage.querySelector('.contact-intro');
+        const contactInfo = contactPage.querySelector('.contact-info');
 
-        // Custom form validation
-        if (contactForm) {
-            const inputs = contactForm.querySelectorAll('input, textarea');
-
-            // Remove default validation tooltips
-            inputs.forEach(input => {
-                input.addEventListener('invalid', function(e) {
-                    e.preventDefault();
-                    this.closest('.form-group').classList.add('has-error');
-                });
-
-                input.addEventListener('input', function() {
-                    if (this.validity.valid) {
-                        this.closest('.form-group').classList.remove('has-error');
-                    }
-                });
-            });
-
-            // Validate on submit
-            contactForm.addEventListener('submit', function(e) {
-                let hasErrors = false;
-                inputs.forEach(input => {
-                    if (!input.validity.valid) {
-                        input.closest('.form-group').classList.add('has-error');
-                        hasErrors = true;
-                    }
-                });
-
-                if (hasErrors) {
-                    e.preventDefault();
-                }
+        // Fade in animations (matching about page)
+        if (contactIntro) {
+            gsap.to(contactIntro, {
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.out',
+                delay: 0.1
             });
         }
 
-        // Staggered fade-in like about page
-        formGroups.forEach((group, index) => {
-            gsap.to(group, {
+        if (contactInfo) {
+            gsap.to(contactInfo, {
                 opacity: 1,
                 duration: 1.2,
                 ease: 'power2.out',
-                delay: 0.1 + (index * 0.15)
+                delay: 0.3
             });
+        }
+    }
 
-            // Show lines immediately
-            const inputLine = group.querySelector('.input-line');
-            if (inputLine) {
-                gsap.set(inputLine, { scaleX: 1 });
-            }
-        });
-
-        // Fade in submit button
+    // ==== THANK YOU OVERLAY (keeping for future use) ====
+    const thankYouCheck = false;
+    if (thankYouCheck) {
+        const submitBtn = document.querySelector('.submit-btn');
         if (submitBtn) {
-            gsap.to(submitBtn, {
-                opacity: 1,
-                duration: 1.2,
-                ease: 'power2.out',
-                delay: 0.1 + (formGroups.length * 0.15) + 0.1
-            });
 
             // Thank you overlay animation on submit
             const thankYouOverlay = document.querySelector('.thank-you-overlay');
@@ -867,6 +866,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 1500);
             }
         }
+    }
+
+    // ==== PROJECTS INDEX (all pages) ====
+    const projectsIndexGlobal = document.getElementById('projectsIndex');
+    if (projectsIndexGlobal) {
+        const currentPage = window.location.pathname.split('/').pop();
+        const indexItemsGlobal = projectsIndexGlobal.querySelectorAll('.index-item');
+
+        indexItemsGlobal.forEach(item => {
+            const itemHref = item.getAttribute('href');
+            if (itemHref === currentPage) {
+                item.classList.add('active');
+            }
+        });
     }
 
     // ==== MOBILE MENU ====

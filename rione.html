@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rione Monte Catering - Caterina Tahan</title>
+    <title>Rione Monti Catering - Caterina Tahan</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,38 +11,52 @@
         <a href="index.html" class="logo">Caterina Tahan</a>
         <button class="menu-toggle" id="menuToggle">[+]</button>
         <nav id="nav">
-            <a href="about.html">About</a>
-            <a href="projects.html">Projects</a>
-            <a href="contact.html">Contact</a>
+            <a href="about.html" data-i18n="nav.about">About</a>
+            <a href="projects.html" data-i18n="nav.projects">Projects</a>
+
         </nav>
+        <div class="lang-switcher">
+            <button class="lang-switch active" data-lang="en">EN</button>
+            <span class="lang-divider">/</span>
+            <button class="lang-switch" data-lang="fr">FR</button>
+        </div>
     </header>
+
+    <div class="projects-index" id="projectsIndex">
+                <a href="grammaroli.html" class="index-item" data-project="grammaroli"><span class="index-title">Grammaroli</span><span class="index-date">2020</span><span class="index-category">Brand Identity & UI/UX</span></a>
+                <a href="sentient.html" class="index-item" data-project="sentient"><span class="index-title">Sentient</span><span class="index-date">2022</span><span class="index-category">Brand Identity & UI/UX</span></a>
+                <a href="anatomy.html" class="index-item" data-project="anatomy"><span class="index-title">The Anatomy of Portuguese Melancholy</span><span class="index-date">2022</span><span class="index-category">Editorial Design</span></a>
+                <a href="stampa.html" class="index-item" data-project="stampa"><span class="index-title">Calendar "Freedom of Press"</span><span class="index-date">2022</span><span class="index-category">Editorial Design</span></a>
+                <a href="rione.html" class="index-item" data-project="rione"><span class="index-title">Rione Monti</span><span class="index-date">2024</span><span class="index-category">Brand Identity & UI/UX</span></a>
+                <a href="pasaporte.html" class="index-item" data-project="pasaporte"><span class="index-title">Pasaporte</span><span class="index-date">2022</span><span class="index-category">Editorial & UI Design</span></a>
+            </div>
 
     <main class="project-detail">
         <div class="project-content">
             <div class="project-info">
                 <div class="project-header">
-                    <h1 class="project-title">Rione Monte.</h1>
-                    <p class="project-meta">2024. Brand Identity & UI/UX.</p>
+                    <h1 class="project-title" data-i18n="projectDetails.rione.title">Rione Monti.</h1>
+                    <p class="project-meta" data-i18n="projectDetails.rione.meta">2024. Brand Identity & UI/UX.</p>
                 </div>
 
                 <div class="project-columns">
                     <div class="project-column">
-                        <h2>BRIEFING</h2>
-                        <p>Rione Monte is a Paris-based Italian catering service specializing in authentic Roman cuisine. The brief called for a complete brand identity and digital presence that would convey the warmth of Italian hospitality while appealing to a French audience.</p>
+                        <h2 data-i18n="projectDetails.rione.briefingTitle">BRIEFING</h2>
+                        <p data-i18n="projectDetails.rione.briefing">Rione Monti is a Paris-based Italian catering service specializing in authentic Roman cuisine. The brief called for a complete brand identity and digital presence that would convey the warmth of Italian hospitality while appealing to a French audience.</p>
                     </div>
 
                     <div class="project-column">
-                        <h2>CONCEPT</h2>
-                        <p>The visual identity draws from the rich iconography of Roman neighborhoods—the rioni. A warm terracotta palette paired with classical illustrations creates an inviting yet refined aesthetic. The design system extends across menus, social media, and print materials, balancing tradition with contemporary sensibility.</p>
+                        <h2 data-i18n="projectDetails.rione.conceptTitle">CONCEPT</h2>
+                        <p data-i18n="projectDetails.rione.concept">The visual identity draws from the rich iconography of Roman neighborhoods—the rioni. A warm terracotta palette paired with classical illustrations creates an inviting yet refined aesthetic. The design system extends across menus, social media, and print materials, balancing tradition with contemporary sensibility.</p>
                     </div>
                 </div>
             </div>
 
             <div class="project-gallery" id="projectGallery">
-                <div class="gallery-slide active">
+                <div class="gallery-slide gallery-slide-small active">
                     <img src="Images/Projects/Rione/BusinessCard_1.jpg" alt="Business Card Front">
                 </div>
-                <div class="gallery-slide">
+                <div class="gallery-slide gallery-slide-small">
                     <img src="Images/Projects/Rione/BusinessCard_2.jpg" alt="Business Card Back">
                 </div>
                 <div class="gallery-slide">
@@ -63,11 +77,20 @@
     </main>
 
     <nav class="project-nav">
-        <a href="stampa.html" class="project-nav-prev">Stampa</a>
+        <a href="stampa.html" class="project-nav-prev">Calendar "Freedom of Press"</a>
         <a href="pasaporte.html" class="project-nav-next">Pasaporte</a>
     </nav>
 
+    <footer>
+        <p><span data-i18n="footer.copyright">© 2025 Caterina Tahan.</span> <br><span class="rights-reserved" data-i18n="footer.rights">All rights reserved.</span></p>
+    </footer>
+    <div class="footer-social">
+        <a href="https://instagram.com/caterinatahan" target="_blank">Instagram</a>
+        <a href="https://linkedin.com/in/caterinatahan" target="_blank">LinkedIn</a>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
