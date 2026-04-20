@@ -889,6 +889,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==== MOBILE MENU ====
     const menuToggle = document.getElementById('menuToggle');
     const nav = document.getElementById('nav');
+    const langSwitcher = document.querySelector('.lang-switcher');
     let isMenuOpen = false;
 
     function initMobileMenu() {
@@ -898,12 +899,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 opacity: 0,
                 display: 'flex'
             });
+            if (langSwitcher) {
+                langSwitcher.classList.remove('menu-open');
+            }
         } else {
             gsap.set(nav, {
                 height: 'auto',
                 opacity: 1,
                 display: 'flex'
             });
+            if (langSwitcher) {
+                langSwitcher.classList.remove('menu-open');
+            }
         }
     }
 
@@ -920,6 +927,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         duration: 0.6,
                         ease: 'power2.out'
                     });
+                    if (langSwitcher) {
+                        langSwitcher.classList.add('menu-open');
+                    }
                     isMenuOpen = true;
                 } else {
                     menuToggle.textContent = '[+]';
@@ -929,6 +939,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         duration: 0.5,
                         ease: 'power2.in'
                     });
+                    if (langSwitcher) {
+                        langSwitcher.classList.remove('menu-open');
+                    }
                     isMenuOpen = false;
                 }
             }
@@ -939,6 +952,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (window.innerWidth > 768) {
                 isMenuOpen = false;
                 menuToggle.textContent = '[+]';
+                if (langSwitcher) {
+                    langSwitcher.classList.remove('menu-open');
+                }
             }
         });
     }

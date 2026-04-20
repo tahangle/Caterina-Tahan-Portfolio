@@ -1079,19 +1079,30 @@ html.projects-page body {
     }
 
     .lang-switcher {
-        order: 2;
-        position: static;
-        margin-left: auto;
-        margin-right: 20px;
+        order: 4;
+        position: absolute;
+        top: 100%;
+        left: 30px;
+        margin-left: 0;
+        margin-top: 15px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .lang-switcher.menu-open {
+        opacity: 1;
+        pointer-events: auto;
     }
 
     .menu-toggle {
         display: block;
         order: 3;
+        margin-left: auto;
     }
 
     nav {
-        order: 4;
+        order: 2;
         position: absolute;
         top: 100%;
         left: 30px;
