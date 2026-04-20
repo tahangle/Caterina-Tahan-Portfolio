@@ -1062,9 +1062,10 @@ html.projects-page body {
 /* Mobile Responsive */
 @media (max-width: 768px) {
     html, body {
-        height: 100%;
+        height: auto;
         min-height: 100vh;
         overflow-x: hidden;
+        overflow-y: auto;
     }
 
     body {
