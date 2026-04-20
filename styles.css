@@ -1278,8 +1278,8 @@ html.projects-page body {
 
     .project-nav {
         display: flex;
-        position: fixed;
-        top: 130px;
+        position: absolute;
+        top: 60px;
         left: 0;
         right: 0;
         padding: 0 30px;
@@ -1287,6 +1287,10 @@ html.projects-page body {
         justify-content: space-between;
         z-index: 99;
         background: none;
+    }
+
+    .project-info {
+        position: relative;
     }
 
     .project-nav a {
