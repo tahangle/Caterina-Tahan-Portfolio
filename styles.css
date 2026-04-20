@@ -602,12 +602,19 @@ html.projects-page body {
 .projects-index .index-item .index-date,
 .projects-index .index-item .index-category {
     display: none;
+    font-family: 'FaireSprigSansMono', monospace;
+    font-size: 10px;
+    font-weight: normal;
+    letter-spacing: 0.19em;
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .projects-index .index-item.active {
     width: calc(50vw - 120px);
     display: flex;
     justify-content: flex-start;
+    align-items: baseline;
     gap: 0;
 }
 
@@ -618,11 +625,13 @@ html.projects-page body {
 .projects-index .index-item.active .index-date {
     display: inline;
     margin-left: auto;
+    align-self: center;
 }
 
 .projects-index .index-item.active .index-category {
     display: inline;
     margin-left: 60px;
+    align-self: center;
 }
 
 .slideshow-container.grid-view .projects-index {
