@@ -1064,6 +1064,7 @@ html.projects-page body {
     html, body {
         height: 100%;
         min-height: 100vh;
+        overflow-x: hidden;
     }
 
     body {
@@ -1280,25 +1281,23 @@ html.projects-page body {
         display: none;
     }
 
-    .project-header {
-        position: relative;
-    }
-
     .project-nav {
         display: flex;
-        position: absolute;
-        top: 0;
-        left: -30px;
-        right: -30px;
+        position: fixed;
+        top: 60px;
+        left: 30px;
+        right: 30px;
         padding: 0;
         margin-top: 0;
         justify-content: space-between;
         z-index: 99;
         background: none;
+        pointer-events: none;
     }
 
     .project-nav a {
         font-size: 0;
+        pointer-events: auto;
     }
 
     .project-nav-prev::before {
