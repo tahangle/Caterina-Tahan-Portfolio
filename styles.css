@@ -1279,7 +1279,7 @@ html.projects-page body {
     .project-nav {
         display: flex;
         position: fixed;
-        top: 30px;
+        top: 130px;
         left: 0;
         right: 0;
         padding: 0 30px;
@@ -1299,6 +1299,16 @@ html.projects-page body {
 
     .project-nav-next::after {
         font-size: 15px;
+    }
+
+    .project-title {
+        line-height: 0.8;
+    }
+
+    .project-meta {
+        font-family: 'FaireSprigSansMono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.19em;
     }
 
     footer {
