@@ -586,7 +586,7 @@ html.projects-page body {
     font-size: 15px;
     font-weight: 200;
     letter-spacing: 0;
-    line-height: 1.1;
+    line-height: 0.8;
     text-transform: uppercase;
     color: #000;
     text-decoration: none;
@@ -779,22 +779,22 @@ html.projects-page body {
 .grid-hover-info .grid-title {
     display: block;
     font-family: 'TimesNow', serif;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 200;
     letter-spacing: 0;
     line-height: 1.1;
-    text-transform: none;
+    text-transform: uppercase;
     color: #000;
 }
 
 .grid-hover-info .grid-meta {
     display: block;
     font-family: 'TimesNow', serif;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 200;
     letter-spacing: 0;
     line-height: 1.1;
-    text-transform: none;
+    text-transform: uppercase;
     color: #000;
 }
 
@@ -907,22 +907,22 @@ html.projects-page body {
 
 .project-title {
     font-family: 'TimesNow', serif;
-    font-size: 32px;
+    font-size: 15px;
     font-weight: 200;
     letter-spacing: 0;
     line-height: 1.1;
-    text-transform: none;
+    text-transform: uppercase;
     margin-bottom: 6px;
     color: #000;
 }
 
 .project-meta {
     font-family: 'TimesNow', serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 200;
     letter-spacing: 0;
     line-height: 1.1;
-    text-transform: none;
+    text-transform: uppercase;
     color: #000;
 }
 
