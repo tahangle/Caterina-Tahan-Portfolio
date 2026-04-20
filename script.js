@@ -407,17 +407,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         startAutoPlay();
 
-        // Hover - pause and show info
+        // Hover - pause autoplay only
         items.forEach(item => {
             item.addEventListener('mouseenter', () => {
                 isPaused = true;
-                titleEl.textContent = item.dataset.title;
-                metaEl.textContent = item.dataset.meta;
-                gsap.to(infoContainer, { opacity: 1, duration: 0.3 });
             });
             item.addEventListener('mouseleave', () => {
                 isPaused = false;
-                gsap.to(infoContainer, { opacity: 0, duration: 0.3 });
             });
         });
 
