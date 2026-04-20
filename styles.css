@@ -582,16 +582,19 @@ html.projects-page body {
 }
 
 .projects-index .index-item {
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    letter-spacing: 0;
-    line-height: 0.65;
-    text-transform: uppercase;
     color: #000;
     text-decoration: none;
     opacity: 0.4;
     transition: opacity 0.3s ease;
+}
+
+.projects-index .index-item .index-title {
+    font-family: 'TimesNow', serif;
+    font-size: 15px;
+    font-weight: 200;
+    letter-spacing: 0.05em;
+    line-height: 0.65;
+    text-transform: uppercase;
 }
 
 .projects-index .index-item:hover,
@@ -781,19 +784,20 @@ html.projects-page body {
     font-family: 'TimesNow', serif;
     font-size: 15px;
     font-weight: 200;
-    letter-spacing: 0;
-    line-height: 1.1;
+    letter-spacing: 0.05em;
+    line-height: 0.65;
     text-transform: uppercase;
     color: #000;
+    margin-bottom: 8px;
 }
 
 .grid-hover-info .grid-meta {
     display: block;
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    letter-spacing: 0;
-    line-height: 1.1;
+    font-family: 'FaireSprigSansMono', monospace;
+    font-size: 10px;
+    font-weight: normal;
+    letter-spacing: 0.19em;
+    line-height: 1;
     text-transform: uppercase;
     color: #000;
 }
@@ -1388,9 +1392,12 @@ html.projects-page body {
 
     /* Mobile footer */
     footer {
+        position: fixed;
         bottom: 20px;
         left: 30px;
         font-size: 12px;
+        background: #fff;
+        padding: 5px 0;
     }
 
     footer p br {
@@ -1402,10 +1409,13 @@ html.projects-page body {
     }
 
     .footer-social {
+        position: fixed;
         bottom: 20px;
         right: 30px;
         gap: 15px;
         font-size: 12px;
+        background: #fff;
+        padding: 5px 0;
     }
 
     /* Mobile view toggles - always visible */
