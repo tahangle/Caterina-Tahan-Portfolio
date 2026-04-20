@@ -1211,7 +1211,7 @@ html.projects-page body {
 
     .project-detail {
         padding: 0;
-        padding-bottom: 0;
+        padding-bottom: 80px;
         height: auto;
         overflow: visible;
     }
@@ -1278,13 +1278,27 @@ html.projects-page body {
 
     .project-nav {
         display: flex;
-        position: relative;
-        padding: 30px;
-        margin-top: 30px;
+        position: fixed;
+        top: 30px;
+        left: 0;
+        right: 0;
+        padding: 0 30px;
+        margin-top: 0;
+        justify-content: space-between;
+        z-index: 99;
+        background: none;
     }
 
     .project-nav a {
-        font-size: 12px;
+        font-size: 0;
+    }
+
+    .project-nav-prev::before {
+        font-size: 15px;
+    }
+
+    .project-nav-next::after {
+        font-size: 15px;
     }
 
     footer {
