@@ -582,12 +582,12 @@ html.projects-page body {
 }
 
 .projects-index .index-item {
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 32px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     color: #000;
     text-decoration: none;
     opacity: 0.4;
@@ -682,22 +682,22 @@ html.projects-page body {
 }
 
 .slideshow-title {
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 32px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     color: #000;
 }
 
 .slideshow-meta {
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 14px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     color: #000;
 }
 
@@ -771,23 +771,23 @@ html.projects-page body {
 
 .grid-hover-info .grid-title {
     display: block;
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 18px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     color: #000;
 }
 
 .grid-hover-info .grid-meta {
     display: block;
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 12px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     color: #000;
 }
 
@@ -896,23 +896,23 @@ html.projects-page body {
 }
 
 .project-title {
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 32px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     margin-bottom: 6px;
     color: #000;
 }
 
 .project-meta {
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
+    font-family: 'TimesNow', serif;
+    font-size: 14px;
+    font-weight: 200;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-transform: none;
     color: #000;
 }
 
