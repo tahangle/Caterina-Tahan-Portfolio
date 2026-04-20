@@ -340,13 +340,12 @@
 
     // Initialize i18n
     function init() {
-        // Check saved preference
+        // Check saved preference, default to English
         let savedLang = localStorage.getItem(STORAGE_KEY);
 
-        // If no saved preference, check browser language
-        if (!savedLang) {
-            const browserLang = navigator.language.split('-')[0];
-            savedLang = SUPPORTED_LANGS.includes(browserLang) ? browserLang : DEFAULT_LANG;
+        // Only use saved preference if user explicitly chose it, otherwise default to English
+        if (!savedLang || !SUPPORTED_LANGS.includes(savedLang)) {
+            savedLang = DEFAULT_LANG;
         }
 
         currentLang = savedLang;
