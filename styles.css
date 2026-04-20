@@ -871,12 +871,13 @@ html.projects-page body {
 /* Project Detail Page */
 .project-detail {
     padding: 0;
-    padding-bottom: 100px;
+    height: calc(100vh - 120px);
+    overflow: hidden;
 }
 
 .project-content {
     display: flex;
-    min-height: calc(100vh - 160px);
+    height: 100%;
 }
 
 .project-info {
@@ -885,7 +886,8 @@ html.projects-page body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: calc(100vh - 120px);
+    height: 100%;
+    overflow: hidden;
 }
 
 .project-header {
@@ -1210,17 +1212,23 @@ html.projects-page body {
     .project-detail {
         padding: 0;
         padding-bottom: 0;
+        height: auto;
+        overflow: visible;
     }
 
     .project-content {
         flex-direction: column;
         min-height: auto;
+        height: auto;
     }
 
     .project-info {
         width: 100%;
         padding: 30px;
         padding-top: 60px;
+        height: auto;
+        overflow: visible;
+        justify-content: flex-start;
     }
 
     .project-header {
