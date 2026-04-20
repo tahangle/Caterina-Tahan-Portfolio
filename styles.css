@@ -1391,12 +1391,13 @@ html.projects-page body {
 
     /* Mobile footer */
     footer {
-        position: fixed;
-        bottom: 20px;
+        position: fixed !important;
+        bottom: 20px !important;
         left: 30px;
         font-size: 12px;
         background: #fff;
         padding: 5px 0;
+        z-index: 1000;
     }
 
     footer p br {
@@ -1408,13 +1409,14 @@ html.projects-page body {
     }
 
     .footer-social {
-        position: fixed;
-        bottom: 20px;
+        position: fixed !important;
+        bottom: 20px !important;
         right: 30px;
         gap: 15px;
         font-size: 12px;
         background: #fff;
         padding: 5px 0;
+        z-index: 1000;
     }
 
     /* Mobile view toggles - always visible */
