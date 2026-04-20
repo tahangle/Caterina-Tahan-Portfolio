@@ -586,7 +586,7 @@ html.projects-page body {
     font-size: 15px;
     font-weight: 200;
     letter-spacing: 0;
-    line-height: 0.8;
+    line-height: 0.65;
     text-transform: uppercase;
     color: #000;
     text-decoration: none;
@@ -1239,17 +1239,32 @@ html.projects-page body {
     .project-gallery {
         width: 100%;
         position: relative;
-        height: 50vh;
+        height: auto;
         top: 0;
-    }
-
-    .gallery-slide {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
         padding: 20px;
     }
 
+    .gallery-slide {
+        position: relative;
+        opacity: 1 !important;
+        padding: 0;
+        height: auto;
+        display: block;
+    }
+
     .gallery-slide img {
-        max-width: 90%;
-        max-height: 90%;
+        max-width: 100%;
+        max-height: none;
+        width: 100%;
+        height: auto;
+    }
+
+    .gallery-slide-small img {
+        max-width: 100%;
+        max-height: none;
     }
 
     .project-columns {
