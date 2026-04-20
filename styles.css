@@ -123,10 +123,14 @@ nav a:hover {
     color: #000;
     background: none;
     border: none;
+    outline: none;
     cursor: pointer;
     padding: 0;
     opacity: 0.4;
     transition: opacity 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .lang-switch:hover {
@@ -1086,10 +1090,9 @@ html.projects-page body {
     }
 
     .lang-switcher {
-        position: absolute;
-        top: 40px;
-        right: 70px;
-        margin-left: 0;
+        position: static;
+        margin-left: auto;
+        margin-right: 15px;
     }
 
     .lang-switch {
@@ -1134,7 +1137,11 @@ html.projects-page body {
     }
 
     .projects-main {
-        padding: 40px 20px;
+        padding: 0 20px;
+        height: auto;
+        min-height: calc(100vh - 80px);
+        align-items: flex-start;
+        padding-top: 20px;
     }
 
     .scrapbook-stack {
@@ -1249,9 +1256,52 @@ html.projects-page body {
     }
 
     /* Mobile slideshow */
+    .slideshow-container {
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 40px;
+    }
+
+    .slideshow-stack {
+        position: relative;
+        height: auto;
+        min-height: 50vh;
+    }
+
     .slide-item img {
-        max-width: 70vw;
-        max-height: 50vh;
+        max-width: 80vw;
+        max-height: 45vh;
+    }
+
+    /* Mobile grid view - single column, scrollable */
+    .slideshow-container.grid-view {
+        height: auto;
+        overflow-y: auto;
+        padding-bottom: 80px;
+    }
+
+    .slideshow-container.grid-view .slideshow-stack {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 10px 20px;
+        overflow: visible;
+        max-height: none;
+        height: auto;
+    }
+
+    .slideshow-container.grid-view .slide-item {
+        padding: 10px;
+    }
+
+    /* Show all items in mobile grid */
+    .slideshow-container.grid-view .slide-item:nth-child(n+9) {
+        display: block;
+    }
+
+    /* Allow scroll on projects page in grid view */
+    html.projects-page.grid-active,
+    html.projects-page.grid-active body {
+        overflow-y: auto;
     }
 
     /* Mobile footer */
@@ -1276,24 +1326,36 @@ html.projects-page body {
         font-size: 12px;
     }
 
-    /* Mobile view toggles */
+    /* Mobile view toggles - always visible */
     .view-toggles {
-        bottom: 20px;
-        right: 30px;
-    }
-
-    /* Mobile arrows */
-    .mobile-arrows {
-        display: flex;
         position: fixed;
         bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
+        right: 30px;
+        display: flex;
+    }
+
+    /* Mobile arrows - positioned below slider */
+    .mobile-arrows {
+        display: flex;
+        position: relative;
+        margin-top: 20px;
         gap: 40px;
         z-index: 100;
-        opacity: 0;
-        animation: fadeIn 1.2s ease forwards;
-        animation-delay: 0.5s;
+        opacity: 1;
+        animation: none;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Hide arrows in grid view */
+    .slideshow-container.grid-view .mobile-arrows {
+        display: none;
+    }
+
+    /* Hide footer on projects page mobile */
+    .projects-page footer,
+    .projects-page .footer-social {
+        display: none;
     }
 
     .mobile-arrow {
@@ -1309,10 +1371,5 @@ html.projects-page body {
     .mobile-arrow:hover,
     .mobile-arrow:active {
         opacity: 1;
-    }
-
-    /* Hide view toggles on mobile in slideshow mode */
-    .slideshow-container:not(.grid-view) .view-toggles {
-        display: none;
     }
 }

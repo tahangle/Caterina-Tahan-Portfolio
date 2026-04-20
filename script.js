@@ -461,6 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function switchToGrid() {
             isGridView = true;
             slideshowContainer.classList.add('grid-view');
+            document.documentElement.classList.add('grid-active');
             gridToggle.classList.add('active');
             slideshowToggle.classList.remove('active');
             clearInterval(autoPlayTimer);
@@ -515,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function switchToSlideshow() {
             isGridView = false;
             slideshowContainer.classList.remove('grid-view');
+            document.documentElement.classList.remove('grid-active');
             slideshowToggle.classList.add('active');
             gridToggle.classList.remove('active');
             // Reset to slideshow
@@ -532,6 +534,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         gridToggle.addEventListener('click', switchToGrid);
         slideshowToggle.addEventListener('click', switchToSlideshow);
+
+        // Check if mobile and set grid view as default
+        const isMobileProjects = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        if (isMobileProjects) {
+            switchToGrid();
+        }
 
         // Mobile arrows
         const prevArrow = document.getElementById('prevArrow');
