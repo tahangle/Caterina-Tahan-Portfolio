@@ -1078,23 +1078,6 @@ html.projects-page body {
         order: 1;
     }
 
-    .lang-switcher {
-        order: 4;
-        position: absolute;
-        top: 100%;
-        left: 30px;
-        margin-left: 0;
-        margin-top: 15px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-    }
-
-    .lang-switcher.menu-open {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
     .menu-toggle {
         display: block;
         order: 3;
@@ -1106,13 +1089,33 @@ html.projects-page body {
         position: absolute;
         top: 100%;
         left: 30px;
-        right: 30px;
+        right: auto;
         background: #fff;
         flex-direction: row;
-        justify-content: space-between;
-        gap: 0;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 40px;
         padding: 0 0 20px;
         overflow: hidden;
+    }
+
+    .lang-switcher {
+        order: 4;
+        position: absolute;
+        top: 100%;
+        right: 30px;
+        left: auto;
+        margin-left: 0;
+        padding-bottom: 20px;
+        background: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .lang-switcher.menu-open {
+        opacity: 1;
+        pointer-events: auto;
     }
 
     .lang-switch {
