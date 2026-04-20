@@ -1276,10 +1276,14 @@ html.projects-page body {
         display: none;
     }
 
+    .project-detail {
+        position: relative;
+    }
+
     .project-nav {
         display: flex;
         position: absolute;
-        top: 60px;
+        top: 65px;
         left: 0;
         right: 0;
         padding: 0 30px;
@@ -1287,10 +1291,6 @@ html.projects-page body {
         justify-content: space-between;
         z-index: 99;
         background: none;
-    }
-
-    .project-info {
-        position: relative;
     }
 
     .project-nav a {
