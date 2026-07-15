@@ -353,6 +353,10 @@
               'alt="' + esc(p.idxTitle) + '" loading="lazy">' +
             gif +
           '</span>' +
+          '<span class="card-labels">' +
+            '<span class="chip">' + esc(p.date) + '</span>' +
+            '<span class="chip">' + esc(p.category) + '</span>' +
+          '</span>' +
         '</a>';
     }).join('');
 
@@ -395,10 +399,8 @@
         // looking at.
         '<div class="detail-head">' +
           '<h1 class="detail-title">' + esc(p.idxTitle) + '</h1>' +
-          '<div class="detail-meta-row">' +
-            '<span>' + esc(p.date) + '</span>' +
-            '<span>' + esc(p.category) + '</span>' +
-          '</div>' +
+          '<span class="chip">' + esc(p.date) + '</span>' +
+          '<span class="chip">' + esc(p.category) + '</span>' +
         '</div>' +
         '<div class="detail-text">' +
           '<div class="detail-block">' +
