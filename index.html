@@ -1,44 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caterina Tahan</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caterina Tahan</title>
+  <meta name="description" content="Caterina Tahan — freelance digital designer based in Paris. Art direction, brand, web.">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <a href="index.html" class="logo">Caterina Tahan</a>
-        <span class="header-tagline">Freelance Designer — Art Direction, Brand, Web</span>
-        <button class="menu-toggle" id="menuToggle">[+]</button>
-        <nav id="nav">
-            <a href="about.html" data-i18n="nav.about">About</a>
-            <a href="projects.html" data-i18n="nav.projects">Projects</a>
+  <!-- Blurred cover preview. Sits behind everything; the hovered gallery card
+       or the current project drives it. -->
+  <div class="cover-bg" id="coverBg" aria-hidden="true"></div>
 
-        </nav>
-        <div class="lang-switcher">
-            <button class="lang-switch active" data-lang="en">EN</button>
-            <span class="lang-divider">/</span>
-            <button class="lang-switch" data-lang="fr">FR</button>
-        </div>
-    </header>
+  <header id="header">
+    <a href="#/" class="logo">Caterina Tahan</a>
+    <span class="tagline" id="tagline"></span>
+    <nav class="nav" id="nav">
+      <a href="#/about" data-nav="about"></a>
+      <a href="#/projects" data-nav="projects"></a>
+    </nav>
+    <div class="lang-toggle" id="langToggle">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="fr">FR</button>
+    </div>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">+</button>
+  </header>
 
-    <main class="homepage">
-        <div id="cursor-trail"></div>
-        <div id="drawPrompt" class="draw-prompt" data-i18n="home.drawPrompt">draw here</div>
-        <div id="centerText" class="center-text" data-i18n="home.centerText">now you know me.</div>
-    </main>
+  <!-- Mobile drop-down menu. Transparent by design. -->
+  <div class="menu-overlay" id="menuOverlay">
+    <a href="#/about" data-nav="about"></a>
+    <a href="#/projects" data-nav="projects"></a>
+  </div>
 
-    <footer>
-        <p><span data-i18n="footer.copyright">© 2025 Caterina Tahan.</span> <br><span class="rights-reserved" data-i18n="footer.rights">All rights reserved.</span></p>
-        <div class="footer-social">
-            <a href="https://instagram.com/caterinatahan" target="_blank">Instagram</a>
-            <a href="https://linkedin.com/in/caterinatahan" target="_blank">LinkedIn</a>
-        </div>
-    </footer>
+  <!-- The project index, pinned under the "Projects" nav link.
+       Visible on the gallery and on a project, desktop only. -->
+  <div class="index-box" id="indexBox">
+    <div class="index-list" id="indexList"></div>
+    <div class="index-arrows" id="indexArrows">
+      <a href="#" class="chip" id="idxPrev" aria-label="Previous project">&larr;</a>
+      <a href="#" class="chip" id="idxNext" aria-label="Next project">&rarr;</a>
+    </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="i18n.js"></script>
-    <script src="script.js"></script>
+  <!-- Date/category chips aligned to the active project's row in the index. -->
+  <div class="detail-meta" id="detailMeta" aria-hidden="true">
+    <span class="chip" id="detailMetaDate"></span>
+    <span class="chip" id="detailMetaCat"></span>
+  </div>
+
+  <main id="app"></main>
+
+  <footer id="footer">
+    <p><span id="copyright"></span> <span class="rights" id="rights"></span></p>
+  </footer>
+
+  <div class="socials" id="socials">
+    <a href="#" class="chip" id="socialIg" target="_blank" rel="noopener">Instagram</a>
+    <a href="#" class="chip" id="socialLi" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="#" class="chip" id="socialMail">Email</a>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

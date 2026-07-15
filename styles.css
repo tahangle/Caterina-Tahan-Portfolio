@@ -1,1507 +1,925 @@
-@font-face {
-    font-family: 'GaramondPremrPro';
-    src: url('fonts/Garamond/GaramondPremrPro.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
+/* ==========================================================================
+   Caterina Tahan — v5
+   One page, four screens: home / about / projects / project detail.
+   Contact is a mailto, not a screen.
+
+   Note on paths: font URLs are case-sensitive once deployed to GitHub Pages
+   (Linux), even though macOS lets you get away with anything. The directory
+   is Fonts/ with a capital F — keep it that way.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Fonts
+
+   Neue Montreal is the workhorse — body, nav, everything at 14px.
+   The design calls for Affairs Mono on the small uppercase tags, but
+   AffairsMono-Regular.otf isn't in this repo. Andale Mono stands in.
+   To swap the real one back in: drop the .otf into Fonts/, uncomment the
+   @font-face below, and stop — --font-mono already lists AffairsMono first.
+   -------------------------------------------------------------------------- */
 
 @font-face {
-    font-family: 'GaramondPremrPro';
-    src: url('fonts/Garamond/GaramondPremrPro-It.ttf') format('truetype');
-    font-weight: normal;
-    font-style: italic;
+  font-family: 'NeueMontreal';
+  src: url('Fonts/NeueMontreal-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-@font-face {
-    font-family: 'GaramondPremrPro';
-    src: url('fonts/Garamond/GaramondPremrPro-Bd.ttf') format('truetype');
-    font-weight: bold;
-    font-style: normal;
-}
+/* @font-face {
+  font-family: 'AffairsMono';
+  src: url('Fonts/AffairsMono-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+} */
 
 @font-face {
-    font-family: 'AndaleMono';
-    src: url('fonts/Andale Mono.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'AndaleMono';
+  src: url('Fonts/Andale Mono.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-@font-face {
-    font-family: 'TimesNow';
-    src: url('fonts/TimesNow/TimesNow-SemiLight.ttf') format('truetype');
-    font-weight: 300;
-    font-style: normal;
+/* --------------------------------------------------------------------------
+   Tokens
+   -------------------------------------------------------------------------- */
+
+:root {
+  --font-sans: 'NeueMontreal', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'AffairsMono', 'AndaleMono', ui-monospace, monospace;
+
+  --bg: #ffffff;
+  --text: #000000;
+  --matte: #e8e7e3;          /* plate + mobile card background */
+  --inactive: #b6b4ad;       /* index names that aren't active */
+  --toggle-track: #eceae4;
+
+  --size-body: 14px;
+  --size-tag: 10px;
+  --lh-body: 1.5;
+
+  --radius-chip: 7px;
+  --shadow-chip: 0 2px 8px rgba(0, 0, 0, 0.14);
+
+  --margin: 60px;            /* page gutter */
+  --gap-gallery: 8px;
+  --gap-detail: 12px;
+
+  /* One detail column. 144px = both 60px gutters + both 12px gaps. */
+  --col: calc((100vw - 144px) / 3);
+  --col-step: calc(var(--col) + var(--gap-detail));
+
+  /* Which column the write-up sits in; app.js sets it per project. */
+  --text-col: 1;
+
+  /* Measured off the "Projects" nav link at runtime. These are fallbacks
+     for the first paint, before the measurement lands. */
+  --nav-x: 648px;
+  --nav-y: 104px;
 }
 
-@font-face {
-    font-family: 'TimesNow';
-    src: url('fonts/TimesNow/TimesNow-ExtraLight.ttf') format('truetype');
-    font-weight: 200;
-    font-style: normal;
+@media (max-width: 700px) {
+  :root {
+    --margin: 20px;
+  }
 }
 
-@font-face {
-    font-family: 'FaireSprigSansMono';
-    src: url('fonts/FAIRE-SprigSansMono-Trial-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
 }
 
 body {
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 1.1;
-    color: #000;
-    background-color: #fff;
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* Header */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 40px 60px;
-    position: relative;
-    z-index: 100;
+/* Home doesn't scroll; every other screen does. */
+body.screen-home {
+  overflow: hidden;
+  touch-action: none;
+}
+
+p {
+  line-height: var(--lh-body);
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+em {
+  font-style: italic;
+}
+
+/* Small white rounded label. Dates, categories, socials, arrows. */
+.chip {
+  display: inline-block;
+  background: #fff;
+  border-radius: var(--radius-chip);
+  padding: 4px 9px;
+  box-shadow: var(--shadow-chip);
+  font-family: var(--font-mono);
+  font-size: var(--size-tag);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Blurred cover
+   Sits behind everything. Driven by gallery hover, and by the current
+   project on a detail page.
+   -------------------------------------------------------------------------- */
+
+.cover-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(22px);
+  transform: scale(1.06);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.cover-bg.is-contain {
+  background-size: contain;
+}
+
+.cover-bg.is-visible {
+  opacity: 0.35;
+}
+
+/* On a project page it fades out as you scroll down, and returns at the top. */
+.cover-bg.is-detail {
+  transition: opacity 0.7s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   Fixed and transparent. pointer-events:none so whatever is underneath stays
+   clickable — each control switches them back on.
+   -------------------------------------------------------------------------- */
+
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px var(--margin);
+  background: transparent;
+  pointer-events: none;
+}
+
+#header .logo,
+#header .nav a,
+#header .lang-toggle,
+#header .menu-btn {
+  pointer-events: auto;
 }
 
 .logo {
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: #000;
-    text-decoration: none;
+  font-size: var(--size-body);
+  font-weight: 400;
+  cursor: pointer;
 }
 
-nav {
-    display: flex;
-    gap: 40px;
+.tagline {
+  font-size: var(--size-body);
+  font-weight: 400;
 }
 
-nav a {
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    color: #000;
-    text-decoration: none;
-    position: relative;
-    text-transform: uppercase;
-    opacity: 1;
-    transition: opacity 0.3s ease;
+.nav {
+  display: flex;
+  gap: 40px;
 }
 
-nav a.active {
-    opacity: 0.5;
+.nav a {
+  font-size: var(--size-body);
+  font-weight: 400;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
-nav a:hover {
-    opacity: 0.5;
+/* The screen you're already on reads as half-lit. */
+.nav a.is-active {
+  opacity: 0.5;
 }
 
-/* Language Switcher */
-.lang-switcher {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-left: 40px;
+/* EN/FR — iOS-style segmented toggle. */
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--toggle-track);
+  border-radius: 9px;
+  padding: 3px;
+  margin-left: 40px;
 }
 
-.lang-switch {
-    font-family: 'TimesNow', serif;
-    font-size: 13px;
-    font-weight: 200;
-    text-transform: uppercase;
-    color: #000;
-    background: none;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 0;
-    opacity: 0.4;
-    transition: opacity 0.3s ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+.lang-toggle button {
+  font-family: var(--font-mono);
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  padding: 5px 13px;
+  border-radius: 6px;
+  background: transparent;
+  color: #9a988f;
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.lang-switch:hover {
-    opacity: 0.7;
+.lang-toggle button.is-active {
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
 }
 
-.lang-switch.active {
-    opacity: 1;
+.menu-btn {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  padding: 0;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
 }
 
-.lang-divider {
-    font-family: 'TimesNow', serif;
-    font-size: 13px;
-    font-weight: 200;
-    color: #000;
-    opacity: 0.4;
+/* + becomes × */
+.menu-btn.is-open {
+  transform: rotate(45deg);
 }
 
-/* Main Content */
-main {
-    padding: 80px 60px 60px;
-    display: flex;
-    gap: 100px;
-    align-items: flex-start;
+/* Mobile drop-down. No plate behind it — it reads straight on the page. */
+.menu-overlay {
+  position: fixed;
+  top: 58px;
+  left: 0;
+  right: 0;
+  z-index: 190;
+  background: transparent;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px var(--margin);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
-/* Homepage */
-.homepage {
-    padding: 0;
-    height: calc(100vh - 120px);
-    overflow: hidden;
-    cursor: none;
-    position: relative;
-    touch-action: none;
+.menu-overlay a {
+  font-size: var(--size-body);
+  cursor: pointer;
 }
 
-.draw-prompt {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    color: #000;
-    opacity: 0;
-    z-index: 100;
-    pointer-events: none;
-    display: none;
+.menu-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.center-text {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    color: #000;
-    opacity: 0;
-    z-index: 100;
-    pointer-events: none;
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+#footer {
+  position: fixed;
+  bottom: 30px;
+  left: var(--margin);
+  z-index: 1000;
+  font-size: var(--size-body);
+  font-weight: 400;
 }
 
-.center-text .bold-text {
-    font-weight: 300;
-}
-
-/* Contact Page */
-.contact-page {
-    padding: 80px 60px 100px;
-    display: flex;
-    gap: 100px;
-    min-height: calc(100vh - 60px);
-    align-items: flex-end;
-}
-
-.contact-intro {
-    flex: 0 0 auto;
-    max-width: 500px;
-    opacity: 0;
-}
-
-.contact-intro p {
-    margin-bottom: 20px;
-}
-
-.contact-info {
-    display: flex;
-    gap: 80px;
-    opacity: 0;
-}
-
-.contact-section {
-    flex: 0 0 auto;
-}
-
-.contact-section h2 {
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-}
-
-.contact-section p {
-    margin-bottom: 5px;
-}
-
-.contact-section a {
-    color: #000;
-    text-decoration: none;
-}
-
-.contact-section a:hover {
-    opacity: 0.5;
-}
-
-.form-group {
-    margin-bottom: 30px;
-    opacity: 0;
-}
-
-.form-group-message {
-    max-width: 100%;
-}
-
-.form-group label {
-    display: block;
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 300;
-    padding: 10px 0;
-    border: none;
-    border-bottom: none;
-    background: transparent;
-    outline: none;
-    position: relative;
-    z-index: 1;
-}
-
-.form-group .input-wrapper {
-    position: relative;
-}
-
-.form-group .input-line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: #000;
-    pointer-events: none;
-}
-
-.form-group input:focus + .input-line,
-.form-group textarea:focus + .input-line {
-    background: #666;
-}
-
-.error-message {
-    display: none;
-    font-family: 'TimesNow', serif;
-    font-size: 12px;
-    font-weight: 200;
-    color: #000;
-    padding-top: 12px;
-    padding-left: 2px;
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.form-group.has-error .error-message {
-    display: block;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.submit-btn {
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    color: #000;
-    opacity: 0;
-}
-
-.submit-btn:hover {
-    opacity: 0.5;
-}
-
-@media (max-width: 768px) {
-    .submit-btn {
-        opacity: 1 !important;
-        margin-top: 10px;
-    }
-}
-
-.thank-you-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.thank-you-overlay.active {
-    pointer-events: all;
-}
-
-.thank-you-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    opacity: 0;
-}
-
-.thank-you-images {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}
-
-.thank-you-images img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100px;
-    height: auto;
-    opacity: 0;
-}
-
-#cursor-trail {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 50;
-}
-
-.cursor-image {
-    position: fixed;
-    width: 100px;
-    height: auto;
-    pointer-events: none;
-    transition: opacity 1s ease;
-    z-index: 50;
-}
-
-.about-page {
-    padding: 80px 60px 60px;
-    display: flex;
-    gap: 100px;
-    align-items: flex-start;
-}
-
-.about-page .intro {
-    flex: 0 0 auto;
-    max-width: 500px;
-    opacity: 0;
-}
-
-.intro p {
-    margin-bottom: 20px;
-}
-
-.about-page .info-columns {
-    display: flex;
-    gap: 100px;
-    flex: 0 0 auto;
-    opacity: 0;
-}
-
-.services,
-.contact,
 .socials {
-    flex: 0 0 auto;
+  position: fixed;
+  bottom: 30px;
+  right: var(--margin);
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
 }
 
-.socials a {
-    color: #000;
-    text-decoration: none;
+/* --------------------------------------------------------------------------
+   Screens — shared
+   -------------------------------------------------------------------------- */
+
+.screen {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-.socials a:hover {
-    opacity: 0.5;
+.screen.is-in {
+  opacity: 1;
 }
 
-h2 {
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    text-transform: uppercase;
-    margin-bottom: 15px;
+/* --------------------------------------------------------------------------
+   Home
+   A trail of image scraps follows the pointer; once you've moved around and
+   paused, a statement fades in.
+   -------------------------------------------------------------------------- */
+
+.home {
+  padding: 0;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+  cursor: none;
+  position: relative;
+  touch-action: none;
 }
 
-footer {
-    position: fixed;
-    bottom: 30px;
-    left: 60px;
-    font-family: 'TimesNow', serif;
-    font-size: 12px;
-    font-weight: 200;
-    color: #000;
-    z-index: 1000;
-    opacity: 0;
-    animation: fadeIn 1.2s ease forwards;
-    animation-delay: 0.5s;
+.trail-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 150; /* above the header, deliberately */
 }
 
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-    }
+.trail-img {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1s ease;
 }
 
-footer p {
-    margin: 0;
+.trail-img.is-out {
+  opacity: 0;
 }
 
-footer p br {
+/* "Draw here." — touch only. A pointer user finds the trail by moving the
+   mouse; a finger has no such accident, so say it out loud. It clears on the
+   first touch, well before the statement is due. */
+.home-prompt {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--size-body);
+  font-weight: 400;
+  color: var(--text);
+  z-index: 100;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.home-prompt.is-out {
+  opacity: 0;
+}
+
+@media (hover: hover) {
+  .home-prompt {
     display: none;
+  }
 }
 
-.footer-social {
-    position: fixed;
-    bottom: 30px;
-    right: 60px;
+.home-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--size-body);
+  font-weight: 400;
+  color: var(--text);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.home-center.is-in {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   About
+   -------------------------------------------------------------------------- */
+
+.about {
+  padding: 150px var(--margin) 80px;
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+  cursor: pointer;
+  min-height: calc(100vh - 60px);
+}
+
+.about-intro {
+  flex: 0 1 40%;
+  max-width: 40%;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.about-intro.is-in {
+  opacity: 1;
+}
+
+.about-intro p + p {
+  margin-top: 40px;
+}
+
+.about-info {
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+  flex: 0 0 auto;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.about-info.is-in {
+  opacity: 1;
+}
+
+.about-info h2 {
+  font-size: var(--size-body);
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.about-info ul {
+  list-style: none;
+  line-height: var(--lh-body);
+}
+
+.about-info a:hover {
+  opacity: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   Projects gallery
+   -------------------------------------------------------------------------- */
+
+.projects {
+  padding: 120px var(--margin) 80px;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-gallery);
+  width: 100%;
+  align-items: stretch;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.grid.is-in {
+  opacity: 1;
+}
+
+/* The card keeps its portrait footprint, but the image and its labels stack
+   as one unit centred inside it — so the chips sit against the image rather
+   than floating at the bottom of an invisible box. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  aspect-ratio: 0.78 / 1;
+  background: transparent;
+  overflow: hidden;
+  padding: 4%;
+}
+
+/* Every cover is a wide screenshot, so width binds first and the image never
+   outgrows the card. A portrait cover would need this revisited. */
+.card-media {
+  position: relative;
+  width: 100%;
+}
+
+.card-media .card-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Grammaroli swaps to its animated site on hover. */
+.card-media .card-gif {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card:hover .card-gif {
+  opacity: 1;
+}
+
+/* The cards carry no labels. Hovering one blurs its cover across the page and
+   lights its name in the index — that's where the naming happens. */
+
+/* --------------------------------------------------------------------------
+   Project index
+   Pinned directly under the "Projects" nav link. Desktop only.
+   -------------------------------------------------------------------------- */
+
+.index-box {
+  position: fixed;
+  left: var(--nav-x);
+  top: var(--nav-y);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 640px;
+}
+
+.index-box.is-visible {
+  display: flex;
+}
+
+.index-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.index-item {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  white-space: nowrap;
+  color: var(--inactive);
+  cursor: pointer;
+  pointer-events: auto;
+  font-size: var(--size-body);
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  line-height: 1.3;
+  opacity: 1;
+  filter: blur(0);
+  transition: color 0.3s ease, filter 0.35s ease, opacity 0.45s ease;
+}
+
+.index-item:hover,
+.index-item.is-active {
+  color: var(--text);
+}
+
+/* Hovering one card softens the others. */
+.index-item.is-dimmed {
+  opacity: 0.5;
+  filter: blur(2px);
+}
+
+/* Scrolling into a project's images clears the list down to that one name. */
+.index-item.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.index-arrows {
+  display: none;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.index-arrows.is-visible {
+  display: flex;
+}
+
+.index-arrows .chip {
+  padding: 4px 10px;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Project detail
+   The plates stack in the same column the card occupied in the gallery. The
+   write-up is fixed in one of the remaining columns; the last one is left
+   empty as breathing room.
+   -------------------------------------------------------------------------- */
+
+.detail {
+  padding: 190px var(--margin) 45vh;
+}
+
+.detail-text {
+  position: fixed;
+  z-index: 2;
+  top: 190px;
+  left: calc(var(--margin) + var(--text-col) * var(--col-step));
+  width: var(--col);
+}
+
+.detail-text h2 {
+  font-size: var(--size-body);
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.detail-text p {
+  margin-bottom: 15px;
+}
+
+.detail-block + .detail-block {
+  margin-top: 36px;
+}
+
+/* Date/category, lined up with the active name's row in the index. */
+.detail-meta {
+  position: fixed;
+  z-index: 2;
+  top: var(--meta-y, 104px);
+  left: calc(var(--margin) + var(--col-step));
+  width: var(--col);
+  display: none;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.detail-meta.is-visible {
+  display: flex;
+}
+
+.plate-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-detail);
+  align-items: start;
+}
+
+.plate-col {
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-detail);
+}
+
+.plate {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.78 / 1;
+  background: var(--matte);
+  overflow: hidden;
+  /* Blur/opacity are written per scroll tick by JS, not animated by CSS.
+     This transition only smooths the gaps between ticks. */
+  transition: filter 0.25s linear, opacity 0.25s linear;
+}
+
+.plate-inner {
+  position: absolute;
+  inset: 11%;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Mobile-only; see below. */
+.detail-arrows {
+  display: none;
+}
+
+.detail-head {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  #header {
+    padding: 22px var(--margin);
+  }
+
+  .tagline,
+  .nav,
+  .lang-toggle {
+    display: none;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .menu-overlay {
+    display: flex;
+  }
+
+  /* Copyright line only — "All rights reserved." is desktop-only. */
+  .rights {
+    display: none;
+  }
+
+  /* Copyright and socials share one line at the foot of the screen. At 360px
+     that's a tight fit, so the copyright drops a size and the chips lose some
+     padding and letter-spacing to buy it back. */
+  #footer,
+  .socials {
+    bottom: 20px;
+  }
+
+  #footer {
+    font-size: 12px;
+  }
+
+  .socials {
+    gap: 4px;
+  }
+
+  .socials .chip {
+    padding: 4px 5px;
+    letter-spacing: 0.04em;
+  }
+
+  .about {
+    padding: 110px var(--margin) 90px;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .about-intro {
+    flex: 0 1 100%;
+    max-width: 100%;
+  }
+
+  .about-info {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .projects {
+    padding: 100px var(--margin) 90px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Cards get the matte behind them on mobile. */
+  .card {
+    background: var(--matte);
+  }
+
+  /* No hover on a phone, so the gif would never show — don't load it. */
+  .card .card-gif {
+    display: none;
+  }
+
+  .index-box {
+    display: none !important;
+  }
+
+  .detail {
+    padding: 92px var(--margin) 90px;
+  }
+
+  /* Title, then the category row, then the write-up, then the plates.
+     The desktop index and its pinned chips don't exist here, so the head
+     block carries the naming instead. */
+  .detail-head {
+    display: block;
+    margin-bottom: 26px;
+  }
+
+  .detail-title {
+    font-size: var(--size-body);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .detail-meta-row {
     display: flex;
     gap: 20px;
-    font-family: 'TimesNow', serif;
-    font-size: 12px;
-    font-weight: 200;
-    opacity: 0;
-    animation: fadeIn 1.2s ease forwards;
-    animation-delay: 0.5s;
-}
-
-.footer-social a {
-    color: #000;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-}
-
-.footer-social a:hover {
-    opacity: 0.5;
-}
-
-ul {
-    list-style: none;
-}
-
-li {
-    margin-bottom: 5px;
-}
-
-.contact a {
-    color: #000;
-    text-decoration: none;
-}
-
-.contact a:hover {
-    text-decoration: underline;
-}
-
-.contact p {
-    margin-bottom: 5px;
-}
-
-/* Mobile Menu Toggle */
-.menu-toggle {
-    display: none;
-    font-size: 15px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #000;
-    font-family: 'TimesNow', serif;
-    font-weight: 200;
-}
-
-/* Projects Page */
-.projects-main {
-    padding: 0;
-    height: calc(100vh - 60px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-html.projects-page,
-html.projects-page body {
-    overflow: hidden;
-}
-
-/* Slideshow Stack */
-.slideshow-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Project Hover Label - cursor following tooltip */
-.project-hover-label {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 3px;
-}
-
-.project-hover-label .label-title,
-.project-hover-label .label-year,
-.project-hover-label .label-category {
-    display: inline-block;
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
+    font-family: var(--font-mono);
+    font-size: var(--size-tag);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #000;
-    background: #fff;
-    padding: 4px 8px;
-}
+  }
 
-.projects-index-arrow {
-    display: none;
-}
+  .detail-text {
+    position: static;
+    width: auto;
+    margin-bottom: 22px;
+  }
 
-.projects-index {
-    position: fixed;
-    left: 60px;
-    top: 80px;
+  /* The chips pinned to the index row are a desktop device. */
+  .detail-meta {
+    display: none !important;
+  }
+
+  .plate-grid {
+    display: block;
+  }
+
+  .plate-col {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    z-index: 100;
-}
+  }
 
-.projects-index .index-item {
-    color: #000;
-    text-decoration: none;
-    opacity: 0.4;
-    transition: opacity 0.3s ease;
-}
-
-.projects-index .index-item .index-title {
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    letter-spacing: 0.05em;
-    line-height: 0.65;
-    text-transform: uppercase;
-}
-
-.projects-index .index-item:hover,
-.projects-index .index-item.active {
-    opacity: 1;
-}
-
-.projects-index .index-item .index-date,
-.projects-index .index-item .index-category {
-    display: none;
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
-}
-
-.projects-index .index-item.active {
+  /* Arrows at the foot of the content, each flush to its own margin. */
+  .detail-arrows {
     display: flex;
-    justify-content: flex-start;
-    align-items: baseline;
-    gap: 20px;
-    white-space: nowrap;
-}
-
-.projects-index .index-item.active .index-title {
-    flex: 0 0 auto;
-}
-
-.projects-index .index-item.active .index-date {
-    display: inline;
-    flex: 0 0 auto;
-}
-
-.projects-index .index-item.active .index-category {
-    display: inline;
-    flex: 0 0 auto;
-}
-
-.slideshow-container.grid-view .projects-index {
-    display: none;
-}
-
-/* Hide project header on desktop when index is showing */
-.project-detail .project-header {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .projects-index {
-        display: none;
-    }
-
-    .project-detail .project-header {
-        display: block;
-    }
-}
-
-.slideshow-stack {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.slide-item {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.slide-item.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.slide-item img {
-    max-width: 35vw;
-    max-height: 45vh;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-}
-
-.slideshow-info {
-    display: none;
-}
-
-.slideshow-title {
-    font-family: 'TimesNow', serif;
-    font-size: 32px;
-    font-weight: 200;
-    letter-spacing: 0;
-    line-height: 1.1;
-    text-transform: none;
-    color: #000;
-}
-
-.slideshow-meta {
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    letter-spacing: 0;
-    line-height: 1.1;
-    text-transform: none;
-    color: #000;
-}
-
-.view-toggles {
-    position: fixed;
-    bottom: 30px;
-    right: 60px;
-    display: flex;
-    gap: 15px;
-    z-index: 100;
-    opacity: 0;
-    animation: fadeIn 1.2s ease forwards;
-    animation-delay: 0.5s;
-}
-
-.view-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: #000;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
-}
-
-.view-toggle:hover {
-    opacity: 0.6;
-}
-
-.view-toggle.active {
-    opacity: 1;
-}
-
-/* Mobile arrows - hidden on desktop */
-.mobile-arrows {
-    display: none;
-}
-
-/* Grid View */
-.slideshow-container.grid-view .slideshow-stack {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 40px 60px;
-    overflow: hidden;
-    align-content: start;
-}
-
-.slideshow-container.grid-view .slide-item {
-    position: relative;
-    opacity: 1;
-    pointer-events: auto;
-    padding: 60px;
-    cursor: pointer;
-}
-
-.slideshow-container.grid-view .slide-item .grid-hover-info {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.slideshow-container.grid-view .slide-item:hover .grid-hover-info {
-    opacity: 1;
-}
-
-.grid-hover-info .grid-title {
-    display: block;
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    letter-spacing: 0.05em;
-    line-height: 0.65;
-    text-transform: uppercase;
-    color: #000;
-    margin-bottom: 8px;
-}
-
-.grid-hover-info .grid-meta {
-    display: block;
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.19em;
-    line-height: 1;
-    text-transform: uppercase;
-    color: #000;
-}
-
-/* Only show first 8 items (2 rows) in grid view */
-.slideshow-container.grid-view .slide-item:nth-child(n+9) {
-    display: none;
-}
-
-.slideshow-container.grid-view .slide-item img {
-    max-width: 100%;
-    max-height: 100%;
-    width: 100%;
-    height: auto;
-}
-
-.slideshow-container.grid-view .slideshow-info {
-    display: none;
-}
-
-.project-item:hover .project-image {
-    opacity: 0.7;
-}
-
-.project-video .project-image {
-    border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.project-item:hover .project-image {
-    opacity: 0.8;
-}
-
-/* Hover swap for animated projects */
-.project-hover-swap:hover .project-image {
-    opacity: 1;
-}
-
-.project-hover-swap {
-    position: relative;
-}
-
-.project-hover-swap .project-static,
-.project-hover-swap .project-animated {
-    width: 100%;
-    height: auto;
-    display: block;
-    transition: opacity 0.3s ease;
-}
-
-.project-hover-swap .project-static {
-    position: relative;
-    opacity: 1;
-}
-
-.project-hover-swap .project-animated {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-}
-
-.projects-grid .project-hover-swap:first-child .project-animated {
-    filter: saturate(0.75) hue-rotate(-10deg);
-}
-
-.project-hover-swap:hover .project-static {
-    opacity: 0;
-}
-
-.project-hover-swap:hover .project-animated {
-    opacity: 1;
-}
-
-/* Project Detail Page */
-.project-detail {
-    padding: 0;
-    height: calc(100vh - 120px);
-    overflow: hidden;
-}
-
-.project-content {
-    display: flex;
-    height: 100%;
-}
-
-.project-info {
-    width: 50%;
-    padding: 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 100%;
-    overflow: hidden;
-}
-
-.project-header {
-    text-align: center;
-    margin-bottom: 80px;
-    white-space: nowrap;
-}
-
-.project-columns {
-    display: flex;
-    gap: 40px;
-}
-
-.project-column {
-    flex: 1;
-}
-
-.project-title {
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    letter-spacing: 0;
-    line-height: 1.1;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    color: #000;
-}
-
-.project-meta {
-    font-family: 'TimesNow', serif;
-    font-size: 15px;
-    font-weight: 200;
-    letter-spacing: 0;
-    line-height: 1.1;
-    text-transform: uppercase;
-    color: #000;
-}
-
-.project-column h2 {
-    margin-bottom: 20px;
-}
-
-.project-column p {
-    margin-bottom: 15px;
-}
-
-.project-gallery {
-    width: 50%;
-    position: fixed;
-    right: 0;
-    top: 60px;
-    height: calc(100vh - 60px);
-    cursor: pointer;
-    z-index: 1;
-}
-
-.gallery-slide {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 100px;
-}
-
-.gallery-slide.active {
-    opacity: 1;
-}
-
-.gallery-slide img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-}
-
-.gallery-slide-small img {
-    max-width: 55%;
-    max-height: 70%;
-}
-
-.gallery-slide-duo {
-    display: flex;
-    gap: 20px;
-}
-
-.gallery-slide-duo.active {
-    display: flex;
-}
-
-.gallery-slide-duo img {
-    flex: 1;
-    max-width: 50%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.gallery-slide-multi {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-}
-
-.gallery-slide-multi.active {
-    display: flex;
-}
-
-.gallery-slide-multi img {
-    max-height: 45%;
-    width: auto;
-    object-fit: contain;
-}
-
-.gallery-slide-video video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.gallery-cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0;
-    font-family: 'FaireSprigSansMono', monospace;
-    font-size: 10px;
-    font-weight: normal;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #000;
-    background: #fff;
-    padding: 4px 8px;
-}
-
-/* Project Navigation */
-.project-nav {
-    display: none;
     justify-content: space-between;
-    padding: 40px 60px;
-    font-family: 'TimesNow', serif;
-    font-size: 14px;
-    font-weight: 200;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    z-index: 50;
+    align-items: center;
+    width: 100%;
+    margin-top: 26px;
+  }
+
+  .detail-arrows .chip {
+    padding: 6px 14px;
+    font-size: 12px;
+    letter-spacing: 0;
+    cursor: pointer;
+  }
 }
 
-.project-nav a {
-    color: #000;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
+/* --------------------------------------------------------------------------
+   Very narrow phones (iPhone SE and friends)
+   The footer row is one line everywhere, which only fits down here if the
+   copyright and the chips both give up a little more.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 345px) {
+  #footer {
+    font-size: 11px;
+  }
+
+  .socials .chip {
+    font-size: 9px;
+    padding: 3px 4px;
+    letter-spacing: 0;
+  }
 }
 
-.project-nav a:hover {
-    opacity: 0.5;
-}
-
-.project-nav-prev::before {
-    content: '← ';
-}
-
-.project-nav-next::after {
-    content: ' →';
-}
-
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    html, body {
-        height: auto;
-        min-height: 100vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 0;
-    }
-
-    .draw-prompt {
-        display: block;
-        opacity: 1;
-    }
-
-    header {
-        padding: 30px;
-        flex-shrink: 0;
-        position: sticky;
-        top: 0;
-        background: #fff;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-    }
-
-    .logo {
-        order: 1;
-    }
-
-    .menu-toggle {
-        display: block;
-        order: 3;
-        margin-left: auto;
-    }
-
-    nav {
-        order: 2;
-        position: absolute;
-        top: 100%;
-        left: 30px;
-        right: auto;
-        background: #fff;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 40px;
-        padding: 0 0 20px;
-        overflow: hidden;
-    }
-
-    .lang-switcher {
-        order: 4;
-        position: absolute;
-        top: 100%;
-        right: 30px;
-        left: auto;
-        margin-left: 0;
-        padding-bottom: 20px;
-        background: #fff;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-    }
-
-    .lang-switcher.menu-open {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .lang-switch {
-        font-size: 12px;
-    }
-
-    .lang-divider {
-        font-size: 12px;
-    }
-
-    main {
-        flex-direction: column;
-        padding: 40px 30px 20px;
-        gap: 20px;
-        flex: 1;
-        overflow-y: auto;
-        margin-bottom: 0;
-    }
-
-    .about-page {
-        padding: 80px 30px;
-        gap: 50px;
-    }
-
-    .intro {
-        max-width: 100%;
-        margin-bottom: 0;
-    }
-
-    .intro p {
-        margin-bottom: 12px;
-    }
-
-    .intro p:last-child {
-        margin-bottom: 0;
-    }
-
-    .about-page .info-columns {
-        flex-direction: column;
-        gap: 50px;
-        margin-top: 0;
-    }
-
-    .projects-main {
-        padding: 0 20px;
-        height: auto;
-        min-height: calc(100vh - 80px);
-        align-items: flex-start;
-        padding-top: 20px;
-    }
-
-    .scrapbook-stack {
-        width: 80vw;
-        height: 50vh;
-    }
-
-    .scrapbook-item img {
-        max-width: 75vw;
-        max-height: 45vh;
-    }
-
-    .scrapbook-info {
-        left: 20px;
-        top: auto;
-        bottom: 80px;
-        transform: none;
-    }
-
-    .scrapbook-counter {
-        bottom: 20px;
-    }
-
-
-    .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 60px 40px;
-    }
-
-    .project-item .project-image {
-        max-width: 160px;
-        max-height: 160px;
-    }
-
-    .project-detail {
-        padding: 0;
-        padding-bottom: 80px;
-        height: auto;
-        overflow: visible;
-    }
-
-    .project-content {
-        flex-direction: column;
-        min-height: auto;
-        height: auto;
-    }
-
-    .project-info {
-        width: 100%;
-        padding: 30px;
-        padding-top: 30px;
-        height: auto;
-        overflow: visible;
-        justify-content: flex-start;
-    }
-
-    .project-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .project-gallery {
-        width: 100%;
-        position: relative;
-        height: auto;
-        top: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding: 20px;
-    }
-
-    .gallery-slide {
-        position: relative;
-        opacity: 1 !important;
-        padding: 0;
-        height: auto;
-        display: block;
-    }
-
-    .gallery-slide img {
-        max-width: 100%;
-        max-height: none;
-        width: 100%;
-        height: auto;
-    }
-
-    .gallery-slide-small img {
-        max-width: 100%;
-        max-height: none;
-    }
-
-    .project-columns {
-        flex-direction: column;
-        gap: 30px;
-    }
-
-    .gallery-cursor {
-        display: none;
-    }
-
-    .project-nav {
-        display: flex;
-        position: fixed;
-        top: 90px;
-        left: 30px;
-        right: 30px;
-        width: auto;
-        padding: 0;
-        justify-content: space-between;
-        background: none;
-        z-index: 50;
-    }
-
-    .project-nav a {
-        font-size: 0;
-    }
-
-    .project-nav-prev::before {
-        font-size: 15px;
-    }
-
-    .project-nav-next::after {
-        font-size: 15px;
-    }
-
-    .project-title {
-        line-height: 0.8;
-    }
-
-    .project-meta {
-        font-family: 'FaireSprigSansMono', monospace;
-        font-size: 10px;
-        letter-spacing: 0.19em;
-    }
-
-    .contact-page {
-        padding: 100px 30px 120px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 40px;
-        min-height: auto;
-    }
-
-    .contact-intro {
-        max-width: 100%;
-    }
-
-    .contact-info {
-        flex-direction: column;
-        gap: 30px;
-    }
-
-    /* Mobile slideshow */
-    .slideshow-container {
-        flex-direction: column;
-        justify-content: flex-start;
-        padding-top: 40px;
-    }
-
-    .slideshow-stack {
-        position: relative;
-        height: auto;
-        min-height: 50vh;
-    }
-
-    .slide-item img {
-        max-width: 80vw;
-        max-height: 45vh;
-    }
-
-    /* Mobile grid view - single column, scrollable */
-    .slideshow-container.grid-view {
-        height: auto;
-        overflow-y: auto;
-        padding-bottom: 80px;
-    }
-
-    .slideshow-container.grid-view .slideshow-stack {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 10px 20px;
-        overflow: visible;
-        max-height: none;
-        height: auto;
-    }
-
-    .slideshow-container.grid-view .slide-item {
-        padding: 10px;
-    }
-
-    /* Show all items in mobile grid */
-    .slideshow-container.grid-view .slide-item:nth-child(n+9) {
-        display: block;
-    }
-
-    /* Allow scroll on projects page in grid view */
-    html.projects-page.grid-active,
-    html.projects-page.grid-active body {
-        overflow-y: auto;
-    }
-
-    /* Mobile footer */
-    footer {
-        position: fixed;
-        bottom: 20px;
-        left: 30px;
-        font-size: 12px;
-        background: #fff;
-        padding: 5px 0;
-        z-index: 1000;
-    }
-
-    footer p br {
-        display: block;
-    }
-
-    footer p .rights-reserved {
-        display: block;
-    }
-
-    .footer-social {
-        position: fixed;
-        bottom: 20px;
-        right: 30px;
-        gap: 15px;
-        font-size: 12px;
-        background: #fff;
-        padding: 5px 0;
-        z-index: 1000;
-    }
-
-    /* Mobile view toggles - always visible */
-    .view-toggles {
-        position: fixed;
-        bottom: 20px;
-        right: 30px;
-        display: flex;
-    }
-
-    /* Mobile arrows - positioned below slider */
-    .mobile-arrows {
-        display: flex;
-        position: relative;
-        margin-top: 20px;
-        gap: 40px;
-        z-index: 100;
-        opacity: 1;
-        animation: none;
-        justify-content: center;
-        width: 100%;
-    }
-
-    /* Hide arrows in grid view */
-    .slideshow-container.grid-view .mobile-arrows {
-        display: none;
-    }
-
-    /* Hide footer on projects page mobile */
-    .projects-page footer,
-    .projects-page .footer-social {
-        display: none;
-    }
-
-    .mobile-arrow {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-        color: #000;
-        opacity: 0.6;
-        transition: opacity 0.3s ease;
-    }
-
-    .mobile-arrow:hover,
-    .mobile-arrow:active {
-        opacity: 1;
-    }
+/* --------------------------------------------------------------------------
+   Reduced motion
+   The trail and the scroll blur are the idea, so they stay. The long
+   cross-fades just stop being long.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .screen,
+  .about-intro,
+  .about-info,
+  .grid,
+  .home-center,
+  .cover-bg,
+  .trail-img,
+  .plate {
+    transition-duration: 0.01ms !important;
+  }
 }
