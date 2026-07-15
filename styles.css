@@ -74,6 +74,10 @@
   /* Which column the write-up sits in; app.js sets it per project. */
   --text-col: 1;
 
+  /* The band the fixed footer occupies: its 30px offset plus one line of
+     body text. Used to stop a project scrolling into the footer. */
+  --footer-band: calc(30px + var(--size-body) * var(--lh-body));
+
   /* Measured off the "Projects" nav link at runtime. These are fallbacks
      for the first paint, before the measurement lands. */
   --nav-x: 648px;
@@ -714,11 +718,12 @@ body.menu-open #header::before {
    empty as breathing room.
    -------------------------------------------------------------------------- */
 
-/* Bottom padding is what the page can scroll past the last plate. Set it to
-   the footer's own offset so scrolling stops exactly when the last image's
-   bottom edge meets the line the footer text sits on. */
+/* Bottom padding is what the page can scroll past the last plate. Clearing
+   the whole footer band plus one plate gap stops the scroll with the last
+   image sitting above the footer text at the same distance the plates keep
+   from each other. */
 .detail {
-  padding: 190px var(--margin) 30px;
+  padding: 190px var(--margin) calc(var(--footer-band) + var(--gap-detail));
 }
 
 .detail-text {
