@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Clear any stale transition state
+    sessionStorage.removeItem('projectNavDirection');
+    document.body.classList.remove('page-transitioning');
+
     // ==== HOMEPAGE ====
     const homepage = document.querySelector('.homepage');
     if (homepage) {
@@ -454,6 +458,43 @@ document.addEventListener('DOMContentLoaded', function() {
         const slideshowToggle = document.getElementById('slideshowToggle');
         const slideshowContainer = document.getElementById('slideshow');
 
+        let hasRunLoadingAnimation = false;
+
+        function runLoadingAnimation() {
+            if (hasRunLoadingAnimation) return;
+            hasRunLoadingAnimation = true;
+
+            // Start all items hidden and in grayscale, reset any transforms from slideshow
+            items.forEach(item => {
+                gsap.set(item, { opacity: 0, scale: 0.95, x: 0, y: 0 });
+                const img = item.querySelector('img');
+                if (img) {
+                    img.style.filter = 'grayscale(100%)';
+                    img.style.transition = 'filter 0.8s ease';
+                }
+            });
+
+            // Animate items appearing one by one in grayscale
+            gsap.to(items, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.4,
+                stagger: 0.08,
+                ease: 'power2.out',
+                onComplete: () => {
+                    // Once all visible, transition to color
+                    setTimeout(() => {
+                        items.forEach(item => {
+                            const img = item.querySelector('img');
+                            if (img) {
+                                img.style.filter = 'grayscale(0%)';
+                            }
+                        });
+                    }, 300);
+                }
+            });
+        }
+
         function switchToGrid() {
             isGridView = true;
             slideshowContainer.classList.add('grid-view');
@@ -461,48 +502,66 @@ document.addEventListener('DOMContentLoaded', function() {
             gridToggle.classList.add('active');
             slideshowToggle.classList.remove('active');
             clearInterval(autoPlayTimer);
-            // Show all items in grid and add hover info
-            items.forEach(item => {
-                gsap.set(item, { opacity: 1, x: 0, scale: 1 });
-                // Add hover info if not already present
-                if (!item.querySelector('.grid-hover-info')) {
-                    const hoverInfo = document.createElement('div');
-                    hoverInfo.className = 'grid-hover-info';
-                    hoverInfo.innerHTML = `
-                        <span class="grid-title">${item.getAttribute('data-title')}</span>
-                        <span class="grid-meta">${item.getAttribute('data-meta')}</span>
-                    `;
-                    item.appendChild(hoverInfo);
-                }
+
+            // Run loading animation on first grid view, or just show items if already run
+            if (!hasRunLoadingAnimation) {
+                runLoadingAnimation();
+            } else {
+                items.forEach(item => {
+                    gsap.set(item, { opacity: 1, x: 0, y: 0, scale: 1 });
+                });
+            }
+        }
+
+        // Hover label that follows cursor
+        const hoverLabel = document.getElementById('projectHoverLabel');
+        const labelTitle = hoverLabel ? hoverLabel.querySelector('.label-title') : null;
+        const labelYear = hoverLabel ? hoverLabel.querySelector('.label-year') : null;
+        const labelCategory = hoverLabel ? hoverLabel.querySelector('.label-category') : null;
+
+        let labelX = 0, labelY = 0;
+        let targetLabelX = 0, targetLabelY = 0;
+
+        // Smooth cursor follow for hover label
+        if (hoverLabel) {
+            gsap.ticker.add(() => {
+                labelX += (targetLabelX - labelX) * 0.15;
+                labelY += (targetLabelY - labelY) * 0.15;
+                gsap.set(hoverLabel, { x: labelX, y: labelY });
             });
         }
 
-        // Grid view hover effects
         items.forEach(item => {
             item.addEventListener('mouseenter', () => {
-                if (isGridView) {
-                    gsap.to(item, {
-                        scale: 1.03,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                    });
-                    gsap.to(item.querySelector('img'), {
-                        opacity: 0.85,
-                        duration: 0.3,
+                if (hoverLabel) {
+                    const title = item.getAttribute('data-title');
+                    const meta = item.getAttribute('data-meta');
+                    const metaParts = meta ? meta.split(', ') : ['', ''];
+                    const year = metaParts[0] || '';
+                    const category = metaParts.slice(1).join(', ') || '';
+
+                    labelTitle.textContent = title;
+                    labelYear.textContent = year;
+                    labelCategory.textContent = category;
+
+                    gsap.to(hoverLabel, {
+                        opacity: 1,
+                        duration: 0.2,
                         ease: 'power2.out'
                     });
                 }
             });
+
+            item.addEventListener('mousemove', (e) => {
+                targetLabelX = e.clientX + 15;
+                targetLabelY = e.clientY + 15;
+            });
+
             item.addEventListener('mouseleave', () => {
-                if (isGridView) {
-                    gsap.to(item, {
-                        scale: 1,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                    });
-                    gsap.to(item.querySelector('img'), {
-                        opacity: 1,
-                        duration: 0.3,
+                if (hoverLabel) {
+                    gsap.to(hoverLabel, {
+                        opacity: 0,
+                        duration: 0.2,
                         ease: 'power2.out'
                     });
                 }
@@ -531,11 +590,8 @@ document.addEventListener('DOMContentLoaded', function() {
         gridToggle.addEventListener('click', switchToGrid);
         slideshowToggle.addEventListener('click', switchToSlideshow);
 
-        // Check if mobile and set grid view as default
-        const isMobileProjects = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-        if (isMobileProjects) {
-            switchToGrid();
-        }
+        // Set grid view as default
+        switchToGrid();
 
         // Mobile arrows
         const prevArrow = document.getElementById('prevArrow');
@@ -624,42 +680,77 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==== PROJECT DETAIL GALLERY ====
-    const projectGallery = document.getElementById('projectGallery');
-    const galleryCursor = document.getElementById('galleryCursor');
+    // Wrap in function so it can be re-called after AJAX load
+    function initProjectGallery() {
+        const projectGallery = document.getElementById('projectGallery');
+        const galleryCursor = document.getElementById('galleryCursor');
 
-    // ==== STANDARD PROJECT GALLERY (slides) ====
-    if (projectGallery && galleryCursor) {
+        if (!projectGallery || !galleryCursor) return;
+
         const slides = projectGallery.querySelectorAll('.gallery-slide');
         let currentSlide = 0;
         const totalSlides = slides.length;
+
+        let cursorX = 0;
+        let cursorY = 0;
+        let targetX = 0;
+        let targetY = 0;
 
         function updateCursor() {
             galleryCursor.textContent = `${currentSlide + 1}/${totalSlides}`;
         }
 
         function nextSlide() {
-            slides[currentSlide].classList.remove('active');
+            const currentEl = slides[currentSlide];
             currentSlide = (currentSlide + 1) % totalSlides;
-            slides[currentSlide].classList.add('active');
+            const nextEl = slides[currentSlide];
+
+            gsap.to(currentEl, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power2.out" });
+            currentEl.classList.remove('active');
+            nextEl.classList.add('active');
+            gsap.fromTo(nextEl, { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
             updateCursor();
         }
 
         function prevSlide() {
-            slides[currentSlide].classList.remove('active');
+            const currentEl = slides[currentSlide];
             currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add('active');
+            const prevEl = slides[currentSlide];
+
+            gsap.to(currentEl, { opacity: 0, scale: 0.95, duration: 0.4, ease: "power2.out" });
+            currentEl.classList.remove('active');
+            prevEl.classList.add('active');
+            gsap.fromTo(prevEl, { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
             updateCursor();
         }
 
         projectGallery.addEventListener('mousemove', function(e) {
-            galleryCursor.style.left = e.clientX + 15 + 'px';
-            galleryCursor.style.top = e.clientY + 15 + 'px';
+            targetX = e.clientX + 15;
+            targetY = e.clientY + 15;
+        });
+
+        gsap.ticker.add(() => {
+            cursorX += (targetX - cursorX) * 0.15;
+            cursorY += (targetY - cursorY) * 0.15;
+            gsap.set(galleryCursor, { x: cursorX, y: cursorY });
+        });
+
+        projectGallery.addEventListener('mouseenter', () => {
+            gsap.to(galleryCursor, { opacity: 1, duration: 0.3, ease: "power2.out" });
+        });
+
+        projectGallery.addEventListener('mouseleave', () => {
+            gsap.to(galleryCursor, { opacity: 0, duration: 0.3, ease: "power2.out" });
         });
 
         projectGallery.addEventListener('click', function(e) {
             const rect = projectGallery.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const galleryWidth = rect.width;
+
+            gsap.to(galleryCursor, { scale: 0.8, duration: 0.1, ease: "power2.out", onComplete: () => {
+                gsap.to(galleryCursor, { scale: 1, duration: 0.2, ease: "elastic.out(1, 0.5)" });
+            }});
 
             if (clickX > galleryWidth / 2) {
                 nextSlide();
@@ -668,7 +759,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Touch/swipe navigation for mobile
         let touchStartX = 0;
         let touchEndX = 0;
 
@@ -678,24 +768,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         projectGallery.addEventListener('touchend', function(e) {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, false);
-
-        function handleSwipe() {
             const swipeThreshold = 50;
             const diff = touchStartX - touchEndX;
-
             if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
+                if (diff > 0) nextSlide();
+                else prevSlide();
             }
-        }
+        }, false);
 
         updateCursor();
     }
+
+    // Initialize gallery on page load
+    initProjectGallery();
 
     // ==== CONTACT PAGE ====
     const contactPage = document.querySelector('.contact-page');
@@ -877,13 +962,164 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectsIndexGlobal) {
         const currentPage = window.location.pathname.split('/').pop();
         const indexItemsGlobal = projectsIndexGlobal.querySelectorAll('.index-item');
+        const indexPrevArrow = document.getElementById('indexPrevArrow');
+        const indexNextArrow = document.getElementById('indexNextArrow');
 
-        indexItemsGlobal.forEach(item => {
+        let currentProjectIndex = 0;
+
+        indexItemsGlobal.forEach((item, index) => {
             const itemHref = item.getAttribute('href');
             if (itemHref === currentPage) {
                 item.classList.add('active');
+                currentProjectIndex = index;
             }
+
         });
+
+        // Register ScrollTrigger
+        if (typeof ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+        }
+
+        // Smooth AJAX transition - only project content changes, index bar stays
+        let isTransitioning = false;
+
+        async function navigateWithTransition(targetUrl, direction) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            const main = document.querySelector('main');
+            const projectNav = document.querySelector('.project-nav');
+
+            try {
+                // Fetch new content FIRST (while current content is still visible)
+                const response = await fetch(targetUrl);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const newMain = doc.querySelector('main');
+                const newProjectNav = doc.querySelector('.project-nav');
+
+                // Fade out
+                await gsap.to([main, projectNav].filter(Boolean), {
+                    opacity: 0,
+                    duration: 0.25,
+                    ease: 'power2.out'
+                });
+
+                // Replace content
+                if (newMain) main.innerHTML = newMain.innerHTML;
+                if (newProjectNav && projectNav) projectNav.innerHTML = newProjectNav.innerHTML;
+
+                // Update page title and URL
+                document.title = doc.title;
+                history.pushState({}, '', targetUrl);
+
+                // Update active state in index
+                const newPage = targetUrl.split('/').pop();
+                indexItemsGlobal.forEach((item, index) => {
+                    const dateEl = item.querySelector('.index-date');
+                    const categoryEl = item.querySelector('.index-category');
+
+                    if (item.getAttribute('href') === newPage) {
+                        item.classList.add('active');
+                        currentProjectIndex = index;
+                        if (dateEl) gsap.fromTo(dateEl, { opacity: 0 }, { opacity: 1, duration: 0.3, delay: 0.1 });
+                        if (categoryEl) gsap.fromTo(categoryEl, { opacity: 0 }, { opacity: 1, duration: 0.3, delay: 0.15 });
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+
+                // Set starting state for new content
+                gsap.set([main, projectNav].filter(Boolean), { opacity: 0 });
+
+                // Fade in
+                await gsap.to([main, projectNav].filter(Boolean), {
+                    opacity: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+
+                initProjectGallery();
+                initProjectNavLinks();
+
+            } catch (error) {
+                window.location.href = targetUrl;
+            }
+
+            isTransitioning = false;
+        }
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', () => {
+            window.location.reload();
+        });
+
+        // Scroll-based navigation between projects (desktop only)
+        let lastScrollTime = 0;
+        const scrollCooldown = 600;
+
+        window.addEventListener('wheel', (e) => {
+            // Only on desktop
+            if (window.innerWidth <= 768) return;
+
+            const now = Date.now();
+            if (isTransitioning || now - lastScrollTime < scrollCooldown) return;
+            if (Math.abs(e.deltaY) < 50) return;
+
+            lastScrollTime = now;
+
+            if (e.deltaY > 0) {
+                const nextIndex = (currentProjectIndex + 1) % indexItemsGlobal.length;
+                const targetUrl = indexItemsGlobal[nextIndex].getAttribute('href');
+                navigateWithTransition(targetUrl, 'next');
+            } else {
+                const prevIndex = (currentProjectIndex - 1 + indexItemsGlobal.length) % indexItemsGlobal.length;
+                const targetUrl = indexItemsGlobal[prevIndex].getAttribute('href');
+                navigateWithTransition(targetUrl, 'prev');
+            }
+        }, { passive: true });
+
+        // Add smooth transitions for index item clicks (project names)
+        indexItemsGlobal.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                // Don't animate if clicking on the current active project
+                if (item.classList.contains('active')) {
+                    return;
+                }
+
+                e.preventDefault();
+                const targetUrl = item.getAttribute('href');
+
+                // Determine direction based on index position
+                const direction = index > currentProjectIndex ? 'next' : 'prev';
+                navigateWithTransition(targetUrl, direction);
+            });
+        });
+
+        // Add smooth transitions for bottom project nav (prev/next links)
+        function initProjectNavLinks() {
+            const projectNavPrev = document.querySelector('.project-nav-prev');
+            const projectNavNext = document.querySelector('.project-nav-next');
+
+            if (projectNavPrev) {
+                projectNavPrev.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateWithTransition(projectNavPrev.getAttribute('href'), 'prev');
+                });
+            }
+
+            if (projectNavNext) {
+                projectNavNext.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateWithTransition(projectNavNext.getAttribute('href'), 'next');
+                });
+            }
+        }
+
+        initProjectNavLinks();
     }
 
     // ==== MOBILE MENU ====

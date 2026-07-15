@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar "Freedom of Press" - Caterina Tahan</title>
     <link rel="stylesheet" href="styles.css">
+    <style>.page-transitioning main, .page-transitioning .project-nav { opacity: 0; }</style>
 </head>
 <body>
+    <script>if(sessionStorage.getItem('projectNavDirection'))document.body.classList.add('page-transitioning');</script>
     <header>
         <a href="index.html" class="logo">Caterina Tahan</a>
+        <span class="header-tagline">Freelance Designer — Art Direction, Brand, Web</span>
         <button class="menu-toggle" id="menuToggle">[+]</button>
         <nav id="nav">
             <a href="about.html" data-i18n="nav.about">About</a>
@@ -23,12 +26,26 @@
     </header>
 
     <div class="projects-index" id="projectsIndex">
-                <a href="grammaroli.html" class="index-item" data-project="grammaroli"><span class="index-title">Grammaroli</span><span class="index-date">2020</span><span class="index-category">Brand Identity & UI/UX</span></a>
-                <a href="sentient.html" class="index-item" data-project="sentient"><span class="index-title">Sentient</span><span class="index-date">2022</span><span class="index-category">Brand Identity & UI/UX</span></a>
-                <a href="anatomy.html" class="index-item" data-project="anatomy"><span class="index-title">The Anatomy of Portuguese Melancholy</span><span class="index-date">2022</span><span class="index-category">Editorial Design</span></a>
-                <a href="stampa.html" class="index-item" data-project="stampa"><span class="index-title">Calendar "Freedom of Press"</span><span class="index-date">2022</span><span class="index-category">Editorial Design</span></a>
-                <a href="rione.html" class="index-item" data-project="rione"><span class="index-title">Rione Monti</span><span class="index-date">2024</span><span class="index-category">Brand Identity & UI/UX</span></a>
-                <a href="pasaporte.html" class="index-item" data-project="pasaporte"><span class="index-title">Pasaporte</span><span class="index-date">2022</span><span class="index-category">Editorial & UI Design</span></a>
+                <button class="projects-index-arrow" id="indexPrevArrow">
+                    <svg viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1">
+                        <line x1="16" y1="5" x2="1" y2="5"/>
+                        <line x1="5" y1="1" x2="1" y2="5"/>
+                        <line x1="5" y1="9" x2="1" y2="5"/>
+                    </svg>
+                </button>
+                <a href="grammaroli.html" class="index-item" data-project="grammaroli"><span class="index-title">grammaroli</span><span class="index-date">2020</span><span class="index-category">brand identity & ui/ux</span></a>
+                <a href="sentient.html" class="index-item" data-project="sentient"><span class="index-title">sentient</span><span class="index-date">2022</span><span class="index-category">brand identity & ui/ux</span></a>
+                <a href="anatomy.html" class="index-item" data-project="anatomy"><span class="index-title">the anatomy of portuguese melancholy</span><span class="index-date">2022</span><span class="index-category">editorial design</span></a>
+                <a href="stampa.html" class="index-item" data-project="stampa"><span class="index-title">calendar "freedom of press"</span><span class="index-date">2022</span><span class="index-category">editorial design</span></a>
+                <a href="rione.html" class="index-item" data-project="rione"><span class="index-title">rione monti</span><span class="index-date">2024</span><span class="index-category">brand identity & ui/ux</span></a>
+                <a href="pasaporte.html" class="index-item" data-project="pasaporte"><span class="index-title">pasaporte</span><span class="index-date">2022</span><span class="index-category">editorial & ui design</span></a>
+                <button class="projects-index-arrow" id="indexNextArrow">
+                    <svg viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1">
+                        <line x1="0" y1="5" x2="15" y2="5"/>
+                        <line x1="11" y1="1" x2="15" y2="5"/>
+                        <line x1="11" y1="9" x2="15" y2="5"/>
+                    </svg>
+                </button>
             </div>
 
     <main class="project-detail">
@@ -88,6 +105,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>

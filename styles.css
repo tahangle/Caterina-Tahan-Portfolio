@@ -571,6 +571,38 @@ html.projects-page body {
     justify-content: center;
 }
 
+/* Project Hover Label - cursor following tooltip */
+.project-hover-label {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+}
+
+.project-hover-label .label-title,
+.project-hover-label .label-year,
+.project-hover-label .label-category {
+    display: inline-block;
+    font-family: 'FaireSprigSansMono', monospace;
+    font-size: 10px;
+    font-weight: normal;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #000;
+    background: #fff;
+    padding: 4px 8px;
+}
+
+.projects-index-arrow {
+    display: none;
+}
+
 .projects-index {
     position: fixed;
     left: 60px;
@@ -1021,7 +1053,20 @@ html.projects-page body {
 }
 
 .gallery-cursor {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    font-family: 'FaireSprigSansMono', monospace;
+    font-size: 10px;
+    font-weight: normal;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #000;
+    background: #fff;
+    padding: 4px 8px;
 }
 
 /* Project Navigation */

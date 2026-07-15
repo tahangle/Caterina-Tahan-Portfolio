@@ -9,6 +9,7 @@
 <body>
     <header>
         <a href="index.html" class="logo">Caterina Tahan</a>
+        <span class="header-tagline">Freelance Designer — Art Direction, Brand, Web</span>
         <button class="menu-toggle" id="menuToggle">[+]</button>
         <nav id="nav">
             <a href="about.html" data-i18n="nav.about">About</a>
@@ -23,15 +24,12 @@
     </header>
 
     <main class="projects-main">
+        <div class="project-hover-label" id="projectHoverLabel">
+            <span class="label-title"></span>
+            <span class="label-year"></span>
+            <span class="label-category"></span>
+        </div>
         <div class="slideshow-container" id="slideshow">
-            <div class="projects-index" id="projectsIndex">
-                <a href="grammaroli.html" class="index-item" data-project="grammaroli"><span class="index-title">Grammaroli</span><span class="index-date">2020</span><span class="index-category">Brand Identity & UI/UX</span></a>
-                <a href="sentient.html" class="index-item" data-project="sentient"><span class="index-title">Sentient</span><span class="index-date">2022</span><span class="index-category">Brand Identity & UI/UX</span></a>
-                <a href="anatomy.html" class="index-item" data-project="anatomy"><span class="index-title">The Anatomy of Portuguese Melancholy</span><span class="index-date">2022</span><span class="index-category">Editorial Design</span></a>
-                <a href="stampa.html" class="index-item" data-project="stampa"><span class="index-title">Calendar "Freedom of Press"</span><span class="index-date">2022</span><span class="index-category">Editorial Design</span></a>
-                <a href="rione.html" class="index-item" data-project="rione"><span class="index-title">Rione Monti</span><span class="index-date">2024</span><span class="index-category">Brand Identity & UI/UX</span></a>
-                <a href="pasaporte.html" class="index-item" data-project="pasaporte"><span class="index-title">Pasaporte</span><span class="index-date">2022</span><span class="index-category">Editorial & UI Design</span></a>
-            </div>
             <div class="slideshow-stack" id="slideshowStack">
                 <a href="grammaroli.html" class="slide-item" data-title="Grammaroli" data-meta="2020, Brand Identity & UI/UX" data-i18n-data-title="projectMeta.grammaroli.title" data-i18n-data-meta="projectMeta.grammaroli.meta"><img src="Images/Projects/Grammaroli/Grammaroli_02.png" alt="Grammaroli"></a>
                 <a href="sentient.html" class="slide-item" data-title="Sentient" data-meta="2022, Brand Identity & UI/UX" data-i18n-data-title="projectMeta.sentient.title" data-i18n-data-meta="projectMeta.sentient.meta"><img src="Images/Projects/Sentient/Sentient_11.gif" alt="Sentient"></a>
@@ -57,12 +55,12 @@
                 <span class="slideshow-meta"></span>
             </div>
             <div class="view-toggles">
-                <button class="view-toggle active" id="slideshowToggle" title="Slideshow view" data-i18n-title="projects.slideshowView">
+                <button class="view-toggle" id="slideshowToggle" title="Slideshow view" data-i18n-title="projects.slideshowView">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                         <rect x="3" y="3" width="10" height="10"/>
                     </svg>
                 </button>
-                <button class="view-toggle" id="gridToggle" title="Grid view" data-i18n-title="projects.gridView">
+                <button class="view-toggle active" id="gridToggle" title="Grid view" data-i18n-title="projects.gridView">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                         <rect x="1" y="1" width="14" height="14"/>
                         <line x1="8" y1="1" x2="8" y2="15"/>
@@ -90,8 +88,13 @@
     <footer>
         <p><span data-i18n="footer.copyright">© 2025 Caterina Tahan.</span> <br><span class="rights-reserved" data-i18n="footer.rights">All rights reserved.</span></p>
     </footer>
+    <div class="footer-social">
+        <a href="https://instagram.com/caterinatahan" target="_blank">Instagram</a>
+        <a href="https://linkedin.com/in/caterinatahan" target="_blank">LinkedIn</a>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>
