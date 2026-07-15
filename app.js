@@ -175,7 +175,8 @@
     el.socialLi.href = CONTACT.linkedin;
     el.socialMail.href = 'mailto:' + CONTACT.email;
 
-    document.body.className = 'screen-' + state.screen;
+    document.body.className = 'screen-' + state.screen +
+      (state.menuOpen ? ' menu-open' : '');
   }
 
   /* ---- render: blurred cover -------------------------------------------- */
@@ -354,8 +355,12 @@
             gif +
           '</span>' +
           '<span class="card-labels">' +
-            '<span class="chip">' + esc(p.date) + '</span>' +
-            '<span class="chip">' + esc(p.category) + '</span>' +
+            // Mobile only — there's no index on a phone to name the project.
+            '<span class="chip card-name">' + esc(p.idxTitle) + '</span>' +
+            '<span class="card-meta">' +
+              '<span class="chip">' + esc(p.date) + '</span>' +
+              '<span class="chip">' + esc(p.category) + '</span>' +
+            '</span>' +
           '</span>' +
         '</a>';
     }).join('');

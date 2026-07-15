@@ -200,11 +200,43 @@ em {
   pointer-events: none;
 }
 
+/* A blurred pane behind the header so content scrolling underneath doesn't
+   collide with the nav. It's masked to fade out over the lower third, which
+   avoids the hard horizontal line a solid bar would draw across the page.
+   Sits in its own layer so the header's own text stays sharp. */
+#header::before,
+.menu-overlay::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 0 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep the header's contents above their own blur pane. */
+#header > *,
+.menu-overlay > * {
+  position: relative;
+  z-index: 1;
+}
+
 #header .logo,
 #header .nav a,
 #header .lang-toggle,
 #header .menu-btn {
   pointer-events: auto;
+}
+
+/* With the menu open, the header's pane runs straight into the menu's rather
+   than fading out and back in — one continuous blur, faded only at the very
+   bottom edge. */
+body.menu-open #header::before {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .logo {
@@ -566,13 +598,23 @@ em {
    (hover: hover) block below. */
 .card-labels {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
   width: 100%;
   margin-top: 10px;
   opacity: 1;
   transition: opacity 0.35s ease;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+}
+
+/* The index names the projects on desktop, so the card doesn't have to. */
+.card-name {
+  display: none;
 }
 
 /* Anything with a real pointer reveals the labels on hover, alongside the
@@ -672,8 +714,11 @@ em {
    empty as breathing room.
    -------------------------------------------------------------------------- */
 
+/* Bottom padding is what the page can scroll past the last plate. Set it to
+   the footer's own offset so scrolling stops exactly when the last image's
+   bottom edge meets the line the footer text sits on. */
 .detail {
-  padding: 190px var(--margin) 45vh;
+  padding: 190px var(--margin) 30px;
 }
 
 .detail-text {
@@ -840,8 +885,38 @@ em {
     display: none;
   }
 
+  /* Labels sit in the card's bottom corner rather than under the image —
+     the image floats in the matte, so hanging them off it looks arbitrary.
+     The name goes on its own line above: with no index on a phone, the card
+     is the only thing that can say what the project is. */
+  .card-labels {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    width: auto;
+    margin-top: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    z-index: 2;
+  }
+
+  .card-name {
+    display: inline-block;
+  }
+
   .index-box {
     display: none !important;
+  }
+
+  /* The covers are roughly 2:1 and a phone is roughly 1:2, so background-size
+     :cover scales them until only about a quarter of their width fits — the
+     wash ends up being one flat colour from the middle of the image. Zoom
+     back out so the picture is actually legible through the blur. */
+  .cover-bg.is-detail,
+  .cover-bg.is-detail.is-contain {
+    background-size: 220% auto;
   }
 
   .detail {

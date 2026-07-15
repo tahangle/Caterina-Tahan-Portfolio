@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caterina Tahan</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/styles.css">
+  <script>
+    /* GitHub Pages serves this for any path it can't find. The v4 site was
+       one file per page; v5 is one page with hash routes. Rather than let
+       old links and search results dead-end, map the ones worth keeping and
+       send everything else home. */
+    (function () {
+      var ROUTES = {
+        'about': '#/about',
+        'contact': '#/about',          // contact details live on About now
+        'projects': '#/projects',
+        'manon-guilbert': '#/manon',
+        'grammaroli': '#/grammaroli',
+        'pasaporte': '#/pasaporte',
+        // Retired from the v5 edit — send these to the gallery, not a dead end.
+        'anatomy': '#/projects',
+        'carthusia': '#/projects',
+        'rione': '#/projects',
+        'sentient': '#/projects',
+        'stampa': '#/projects'
+      };
+
+      var slug = location.pathname
+        .replace(/^\/+|\/+$/g, '')
+        .replace(/\.html?$/i, '')
+        .toLowerCase();
+
+      // replace() rather than assign() so Back doesn't bounce off this page.
+      location.replace('/' + (ROUTES[slug] || ''));
+    })();
+  </script>
+</head>
+<body>
+  <!-- Only seen if JavaScript is off, or for the blink before the redirect. -->
+  <main style="padding:150px 60px;">
+    <p>This page has moved. <a href="/">Go to caterinatahan.com</a></p>
+  </main>
+</body>
+</html>
