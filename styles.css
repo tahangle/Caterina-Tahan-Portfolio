@@ -1032,38 +1032,24 @@ body.screen-about .extras {
     letter-spacing: 0.04em;
   }
 
-  /* Home/About scroll as a tall page on mobile. A fixed footer would float
-     over the last sections (Languages/Education/Experience) and collide with
-     the rail's time label bottom-left. So on these two screens the footer and
-     socials leave their fixed corners and join the flow at the very end. The
-     56px left padding clears the side rail, matching the content column. */
-  body.screen-home #footer,
-  body.screen-about #footer,
-  body.screen-home .socials,
-  body.screen-about .socials {
-    position: static;
-    inset: auto;
-    padding-left: 56px;
-    padding-right: var(--margin);
-    justify-content: flex-start;
+  /* Footer is one fixed row on every mobile screen — copyright left, socials
+     right — consistent with the project pages. Nudged in from the left edge
+     so the copyright clears the side rail's vertical time label. */
+  #footer {
+    left: 44px;
   }
 
-  body.screen-home #footer,
-  body.screen-about #footer {
-    margin-top: 24px;
+  /* Home/About are tall scrolling pages, so their content needs room at the
+     bottom to clear the fixed footer instead of ending underneath it. */
+  body.screen-home .ha-row,
+  body.screen-about .ha-row {
+    padding-bottom: 84px;
   }
 
-  body.screen-home .socials,
-  body.screen-about .socials {
-    margin-top: 14px;
-    padding-bottom: 40px;
-    gap: 6px;
-  }
-
-  /* No fixed footer to clear here anymore. */
-  body.screen-home .info-col,
-  body.screen-about .info-col {
-    padding-bottom: 0;
+  /* Drop the rail's top label below the header so "PARIS FRANCE" stops
+     crowding the logo. (Desktop keeps 46px, aligned to the header row.) */
+  .rail {
+    padding-top: 76px;
   }
 
   /* The page scrolls naturally here rather than locking to the viewport. */
@@ -1169,6 +1155,16 @@ body.screen-about .extras {
     padding: 92px var(--margin) 90px;
   }
 
+  /* Text and controls clear the side rail (matching the home column's left
+     inset). The plates deliberately stay full-width: the rail reads fine
+     crossing an image, per the design. 36px on top of the 20px page padding
+     lands the text at 56px, past the rail's ~29px right edge. */
+  .detail-head,
+  .detail-text,
+  .detail-arrows {
+    padding-left: 36px;
+  }
+
   /* Title, date and category share one row, spread across the full width.
      The desktop index and its pinned chips don't exist here, so this row
      carries the naming instead. */
@@ -1236,6 +1232,13 @@ body.screen-about .extras {
 @media (max-width: 345px) {
   #footer {
     font-size: 11px;
+    /* Ease back toward the edge on tiny screens so the copyright and the
+       three social chips still fit one row — still clear of the rail (~29px). */
+    left: 34px;
+  }
+
+  .socials {
+    gap: 3px;
   }
 
   .socials .chip,
