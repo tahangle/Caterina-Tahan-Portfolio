@@ -57,14 +57,19 @@
 
   <main id="app"></main>
 
-  <footer id="footer">
-    <p><span id="copyright"></span> <span class="rights" id="rights"></span></p>
-  </footer>
+  <!-- Copyright and socials. On desktop each is fixed to its own bottom
+       corner; on mobile the wrapper lays them out as one row at the very end
+       of the page (see .site-footer). -->
+  <div class="site-footer" id="siteFooter">
+    <footer id="footer">
+      <p><span id="copyright"></span> <span class="rights" id="rights"></span></p>
+    </footer>
 
-  <div class="socials" id="socials">
-    <a href="#" class="chip" id="socialIg" target="_blank" rel="noopener">Instagram</a>
-    <a href="#" class="chip" id="socialLi" target="_blank" rel="noopener">LinkedIn</a>
-    <a href="#" class="chip" id="socialMail">Email</a>
+    <div class="socials" id="socials">
+      <a href="#" class="chip" id="socialIg" target="_blank" rel="noopener">Instagram</a>
+      <a href="#" class="chip" id="socialLi" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#" class="chip" id="socialMail">Email</a>
+    </div>
   </div>
 
   <script src="data.js"></script>

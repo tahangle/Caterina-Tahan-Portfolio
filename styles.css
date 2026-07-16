@@ -462,7 +462,15 @@ body.screen-home .logo {
 
 /* --------------------------------------------------------------------------
    Footer
+   Desktop: copyright fixed bottom-left, socials fixed bottom-right. The
+   .site-footer wrapper is transparent to layout here (display: contents), so
+   the two keep their own corners. On mobile the wrapper takes over and lays
+   them out as one static row at the end of the page (see the mobile block).
    -------------------------------------------------------------------------- */
+
+.site-footer {
+  display: contents;
+}
 
 #footer {
   position: fixed;
@@ -1011,12 +1019,25 @@ body.screen-about .extras {
     display: none;
   }
 
-  /* Copyright and socials share one line at the foot of the screen. At 360px
-     that's a tight fit, so the copyright drops a size and the chips lose some
-     padding and letter-spacing to buy it back. */
+  /* Copyright line only — "All rights reserved." is desktop-only (already
+     hidden above). */
+
+  /* On mobile the footer isn't fixed — it flows to the very end of the page
+     so it only appears when you scroll all the way down, never floating over
+     the content. Copyright left, socials right, one row. The 44px left clears
+     the side rail's vertical time label; the chips tighten so all three fit. */
+  .site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--margin) 34px 44px;
+    margin-top: 32px;
+  }
+
   #footer,
   .socials {
-    bottom: 20px;
+    position: static;
+    inset: auto;
   }
 
   #footer {
@@ -1030,20 +1051,6 @@ body.screen-about .extras {
   .socials .chip {
     padding: 4px 5px;
     letter-spacing: 0.04em;
-  }
-
-  /* Footer is one fixed row on every mobile screen — copyright left, socials
-     right — consistent with the project pages. Nudged in from the left edge
-     so the copyright clears the side rail's vertical time label. */
-  #footer {
-    left: 44px;
-  }
-
-  /* Home/About are tall scrolling pages, so their content needs room at the
-     bottom to clear the fixed footer instead of ending underneath it. */
-  body.screen-home .ha-row,
-  body.screen-about .ha-row {
-    padding-bottom: 84px;
   }
 
   /* Drop the rail's top label below the header so "PARIS FRANCE" stops
@@ -1073,13 +1080,17 @@ body.screen-about .extras {
 
   body.screen-about .ha-lift {
     transform: translateY(calc(-30.8vw + 20px));
+    /* The lift only moves the block visually — its layout box stays put, so
+       the footer below it would sit a lift's-worth of empty space too low.
+       Pull the flow up by the same amount so the footer follows the content. */
+    margin-bottom: calc(-30.8vw + 20px);
   }
 
   /* One column. The 56px left padding clears the side rail. The footer now
      flows below in the page rather than floating, so no big bottom pad. */
   .ha-row {
     flex-direction: column;
-    padding: 34px 20px 24px 56px;
+    padding: 34px 20px 8px 56px;
     gap: 40px;
   }
 
@@ -1101,6 +1112,9 @@ body.screen-about .extras {
        below its content and the last sections overflow through the footer. */
     flex: 0 0 auto;
     min-height: auto;
+    /* Drop the desktop reserve below the last section — the static footer
+       supplies the end spacing now. */
+    padding-bottom: 0;
   }
 
   /* No viewport cap on a phone — the page itself scrolls. */
@@ -1152,7 +1166,7 @@ body.screen-about .extras {
   }
 
   .detail {
-    padding: 92px var(--margin) 90px;
+    padding: 92px var(--margin) 8px;
   }
 
   /* Text and controls clear the side rail (matching the home column's left
@@ -1232,9 +1246,12 @@ body.screen-about .extras {
 @media (max-width: 345px) {
   #footer {
     font-size: 11px;
-    /* Ease back toward the edge on tiny screens so the copyright and the
-       three social chips still fit one row — still clear of the rail (~29px). */
-    left: 34px;
+  }
+
+  /* Ease the row back toward the edge on tiny screens so the copyright and
+     the three chips still fit — still clear of the rail (~29px). */
+  .site-footer {
+    padding-left: 34px;
   }
 
   .socials {
