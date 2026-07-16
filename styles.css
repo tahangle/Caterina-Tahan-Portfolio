@@ -26,6 +26,24 @@
   font-display: swap;
 }
 
+/* The giant "tahan". Nothing else uses it. */
+@font-face {
+  font-family: 'RubikBlack';
+  src: url('Fonts/Rubik-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: block; /* the title IS the home screen — don't flash a fallback */
+}
+
+/* The serif voice of the intro. */
+@font-face {
+  font-family: 'TimesNow';
+  src: url('Fonts/TimesNow/TimesNow-SemiLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* @font-face {
   font-family: 'AffairsMono';
   src: url('Fonts/AffairsMono-Regular.otf') format('opentype');
@@ -49,6 +67,13 @@
 :root {
   --font-sans: 'NeueMontreal', -apple-system, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'AffairsMono', 'AndaleMono', ui-monospace, monospace;
+  --font-display: 'RubikBlack', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'TimesNow', Georgia, 'Times New Roman', serif;
+
+  /* Motion. Soft landing for things arriving, dramatic sweep for things
+     being thrown around. */
+  --ease-land: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-sweep: cubic-bezier(0.76, 0, 0.18, 1);
 
   --bg: #ffffff;
   --text: #000000;
@@ -100,8 +125,19 @@
   box-sizing: border-box;
 }
 
+/* The giant title is deliberately set wider than it needs to be and bleeds
+   off the left edge. Left unclipped at the root, a phone browser treats that
+   overflow as "content too wide", shrinks the whole page to fit, and every
+   vw unit on the page silently scales with it — the title ends up smaller
+   than specified and nothing lines up.
+
+   Clip it here so the viewport stays honest. `clip` rather than `hidden`:
+   hidden would turn the root into a scroll container, clip just clips. The
+   hidden line is the fallback for browsers without clip. */
 html {
   background: var(--bg);
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -114,6 +150,7 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Home doesn't scroll; every other screen does. */
@@ -243,10 +280,29 @@ body.menu-open #header::before {
   mask-image: none;
 }
 
+/* Desktop Home/About is a fixed composition — nothing ever scrolls under the
+   nav, so the pane does no work and only smears the top of the giant title
+   and the side rail. On a phone these screens do scroll, so it stays. */
+@media (min-width: 701px) {
+  body.screen-home #header::before,
+  body.screen-about #header::before {
+    content: none;
+  }
+}
+
 .logo {
   font-size: var(--size-body);
   font-weight: 400;
   cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.3s ease 0.35s;
+}
+
+/* On home the giant "tahan" is the name — the logo would say it twice. */
+body.screen-home .logo {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
 .tagline {
@@ -349,6 +405,50 @@ body.menu-open #header::before {
 }
 
 /* --------------------------------------------------------------------------
+   Side rail
+   Fixed to the left edge: where she is, and what time it is there. Top label
+   lines up with the header logo, bottom with the footer.
+   -------------------------------------------------------------------------- */
+
+.rail {
+  position: fixed;
+  left: 18px;
+  top: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 46px 0 30px;
+  font-family: var(--font-mono);
+  font-size: var(--size-tag);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+
+  /* On a phone the title bleeds left past the rail, so black labels would sit
+     on black letters. invert + difference makes the labels read against
+     whatever is behind them: white over the letters, black over the page.
+     Over plain white it computes straight back to black, so desktop looks
+     unchanged. |white - white| = black; |white - black| = white.
+
+     This has to live on .rail, not on the items: z-index makes .rail a
+     stacking context, so a blend on a child would resolve against the rail's
+     own empty backdrop instead of the page, and vanish. */
+  filter: invert(1);
+  mix-blend-mode: difference;
+}
+
+.rail-item {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  border-bottom: 1px solid #0d0d0d;
+  padding-bottom: 4px;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
 
@@ -386,145 +486,194 @@ body.menu-open #header::before {
 }
 
 /* --------------------------------------------------------------------------
-   Home
-   A trail of image scraps follows the pointer; once you've moved around and
-   paused, a statement fades in.
+   Home + About — one view, two states
+
+   Home is the giant title with the intro sitting under it, blurred. About
+   unblurs that intro, fades in the extra sections and lifts the whole block
+   up so the title travels off the top. Everything below keys off the class
+   on <body>, so moving between the two never touches the DOM.
    -------------------------------------------------------------------------- */
 
-.home {
-  padding: 0;
-  height: calc(100vh - 120px);
+.ha {
+  height: 100vh;
   overflow: hidden;
-  cursor: none;
-  position: relative;
-  touch-action: none;
-}
-
-.trail-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 150; /* above the header, deliberately */
-}
-
-.trail-img {
-  position: fixed;
-  width: 100px;
-  height: 100px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 1s ease;
-}
-
-.trail-img.is-out {
-  opacity: 0;
-}
-
-/* "Draw here." — touch only. A pointer user finds the trail by moving the
-   mouse; a finger has no such accident, so say it out loud. It clears on the
-   first touch, well before the statement is due. */
-.home-prompt {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: var(--size-body);
-  font-weight: 400;
-  color: var(--text);
-  z-index: 100;
-  pointer-events: none;
-  white-space: nowrap;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-}
-
-.home-prompt.is-out {
-  opacity: 0;
-}
-
-@media (hover: hover) {
-  .home-prompt {
-    display: none;
-  }
-}
-
-.home-center {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: var(--size-body);
-  font-weight: 400;
-  color: var(--text);
-  z-index: 100;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.home-center.is-in {
-  opacity: 1;
-}
-
-/* --------------------------------------------------------------------------
-   About
-   -------------------------------------------------------------------------- */
-
-.about {
-  padding: 150px var(--margin) 80px;
+  padding-top: 64px;
   display: flex;
-  gap: 80px;
-  align-items: flex-start;
+  flex-direction: column;
+}
+
+/* The block that rides up when About opens. */
+.ha-lift {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transform: translateY(0);
+  transition: transform 1.5s var(--ease-sweep) 0.4s;
+}
+
+body.screen-about .ha-lift {
+  transform: translateY(calc(-19.85vw + 26px));
+}
+
+.hero {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 27.5vw;
+  line-height: 0.62;
+  letter-spacing: -0.02em;
+  margin-left: 7.6vw;
+  margin-top: 2.8vw;
+  white-space: nowrap;
+  min-height: 0.62em;
+  transform-origin: left top;
+  flex-shrink: 0;
+  transform: translateY(0);
+  transition: transform 1.6s var(--ease-sweep) 0.3s;
+}
+
+/* The title clears the screen entirely — further than the block moves, so it
+   overtakes the text on the way out. */
+body.screen-about .hero {
+  transform: translateY(-130%);
+}
+
+.ha-row {
+  display: flex;
+  padding: 40px var(--margin) 90px 165px;
+  gap: 40px;
+  flex-shrink: 0;
+}
+
+/* ---- intro column ---- */
+
+.intro-col {
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 1.9vw, 32px);
+  line-height: 1.18;
+  max-width: min(620px, 36vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1.6vw;
+}
+
+.intro-col p {
+  line-height: 1.18;
+}
+
+/* The typewriter's caret. */
+.role {
+  border-right: 2px solid #0d0d0d;
+  padding-right: 2px;
+}
+
+/* On Home these are a locked door you can see through; clicking opens it. */
+.intro-blur {
+  filter: blur(6px);
+  opacity: 0.75;
   cursor: pointer;
-  min-height: calc(100vh - 60px);
+  transition: filter 0.8s ease, opacity 0.8s ease;
 }
 
-.about-intro {
-  flex: 0 1 40%;
-  max-width: 40%;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-
-.about-intro.is-in {
+body.screen-about .intro-blur {
+  filter: blur(0);
   opacity: 1;
+  cursor: default;
 }
 
-.about-intro p + p {
-  margin-top: 40px;
-}
+/* ---- info column ---- */
 
-.about-info {
-  display: flex;
-  flex-direction: row;
-  gap: 100px;
-  flex: 0 0 auto;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-
-.about-info.is-in {
-  opacity: 1;
-}
-
-.about-info h2 {
+.info-col {
+  margin-left: auto;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: none;
+  padding-top: 6px;
+  padding-bottom: 70px;      /* keeps content off the footer chips */
+  flex: 1 1 340px;
+  min-width: 0;
+  max-width: 460px;
+  font-family: var(--font-sans);
   font-size: var(--size-body);
   font-weight: 400;
-  margin-bottom: 6px;
-}
-
-.about-info ul {
-  list-style: none;
   line-height: var(--lh-body);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 4vh, 44px);
 }
 
-.about-info a:hover {
-  opacity: 0.5;
+.info-col::-webkit-scrollbar {
+  display: none;
+}
+
+body.screen-about .info-col {
+  max-height: calc(100vh - 150px);
+}
+
+/* Label column, then content. break-word rather than nowrap: at laptop
+   widths these would otherwise clip. */
+.info-grid {
+  display: grid;
+  grid-template-columns: clamp(120px, 11vw, 170px) minmax(0, 1fr);
+  align-items: start;
+  align-content: start;
+  overflow-wrap: break-word;
+}
+
+.info-head {
+  margin-bottom: 16px;
+}
+
+.ha-gap {
+  margin-top: 18px;
+}
+
+.lang-dots {
+  opacity: 0.45;
+  letter-spacing: 0.05em;
+}
+
+.ha-link {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Thicken rather than underline — keeps the line rhythm intact. */
+.ha-link:hover {
+  -webkit-text-stroke: 0.5px var(--text);
+}
+
+.exp-role {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- the extra sections, About only ---- */
+
+.extras {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease 0s;
+}
+
+body.screen-about .extras {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.8s ease 0.25s;
+}
+
+/* Wiggles just enough to be noticed. */
+.open-chip {
+  animation: wiggle 2.2s ease-in-out infinite;
+  cursor: pointer;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50%      { transform: rotate(2.5deg) translateY(-2px); }
 }
 
 /* --------------------------------------------------------------------------
@@ -608,17 +757,10 @@ body.menu-open #header::before {
   transition: opacity 0.35s ease;
 }
 
-.card-meta {
-  display: flex;
+.card-labels {
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
-  width: 100%;
-}
-
-/* The index names the projects on desktop, so the card doesn't have to. */
-.card-name {
-  display: none;
 }
 
 /* Anything with a real pointer reveals the labels on hover, alongside the
@@ -724,6 +866,28 @@ body.menu-open #header::before {
    from each other. */
 .detail {
   padding: 190px var(--margin) calc(var(--footer-band) + var(--gap-detail));
+}
+
+/* Changing project: the old one sweeps up and out, the new one rises into
+   place. No transform in the resting state — a transformed ancestor would
+   make the fixed write-up column resolve against .detail instead of the
+   viewport, and it would scroll away with the page. */
+.detail.is-out {
+  transform: translateY(-58vh);
+  opacity: 0;
+  transition: transform 0.75s var(--ease-sweep), opacity 0.45s ease 0.2s;
+}
+
+.detail.is-pre {
+  transform: translateY(9vh);
+  opacity: 0;
+  transition: none;
+}
+
+.detail.is-in {
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 1.1s var(--ease-land), opacity 0.6s ease;
 }
 
 .detail-text {
@@ -856,20 +1020,94 @@ body.menu-open #header::before {
     letter-spacing: 0.04em;
   }
 
-  .about {
-    padding: 110px var(--margin) 90px;
+  /* Home/About scroll as a tall page on mobile. A fixed footer would float
+     over the last sections (Languages/Education/Experience) and collide with
+     the rail's time label bottom-left. So on these two screens the footer and
+     socials leave their fixed corners and join the flow at the very end. The
+     56px left padding clears the side rail, matching the content column. */
+  body.screen-home #footer,
+  body.screen-about #footer,
+  body.screen-home .socials,
+  body.screen-about .socials {
+    position: static;
+    inset: auto;
+    padding-left: 56px;
+    padding-right: var(--margin);
+    justify-content: flex-start;
+  }
+
+  body.screen-home #footer,
+  body.screen-about #footer {
+    margin-top: 24px;
+  }
+
+  body.screen-home .socials,
+  body.screen-about .socials {
+    margin-top: 14px;
+    padding-bottom: 40px;
+    gap: 6px;
+  }
+
+  /* No fixed footer to clear here anymore. */
+  body.screen-home .info-col,
+  body.screen-about .info-col {
+    padding-bottom: 0;
+  }
+
+  /* The page scrolls naturally here rather than locking to the viewport. */
+  .ha {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding-top: 56px;
+  }
+
+  /* Full-bleed. "tahan" is 3.04em wide in Rubik Black, so 33vw is the size
+     that spans the screen exactly — the handoff's 40vw makes the word 122%
+     of the viewport and crops the final n. (That value most likely came from
+     a prototype where the browser was zooming the page out to fit, which hid
+     the overflow and shrank the body copy along with it.) */
+  .hero {
+    font-size: 33vw;
+    margin-left: -1.5vw;
+    margin-top: 6vw;
+  }
+
+  body.screen-about .ha-lift {
+    transform: translateY(calc(-30.8vw + 20px));
+  }
+
+  /* One column. The 56px left padding clears the side rail. The footer now
+     flows below in the page rather than floating, so no big bottom pad. */
+  .ha-row {
     flex-direction: column;
+    padding: 34px 20px 24px 56px;
     gap: 40px;
   }
 
-  .about-intro {
-    flex: 0 1 100%;
+  .intro-col {
+    font-size: clamp(20px, 6.4vw, 30px);
     max-width: 100%;
+    gap: 22px;
   }
 
-  .about-info {
-    flex-direction: column;
-    gap: 40px;
+  .info-col {
+    margin-left: 0;
+    max-width: 100%;
+    overflow-y: visible;
+    font-size: 13px;
+    gap: 30px;
+    /* On desktop this is a flex child that scrolls inside a fixed frame
+       (flex: 1 1 340px; min-height: 0). On a phone the page scrolls instead,
+       so the column must take its full natural height — otherwise it shrinks
+       below its content and the last sections overflow through the footer. */
+    flex: 0 0 auto;
+    min-height: auto;
+  }
+
+  /* No viewport cap on a phone — the page itself scrolls. */
+  body.screen-about .info-col {
+    max-height: none;
   }
 
   .projects {
@@ -890,10 +1128,8 @@ body.menu-open #header::before {
     display: none;
   }
 
-  /* Labels sit in the card's bottom corner rather than under the image —
-     the image floats in the matte, so hanging them off it looks arbitrary.
-     The name goes on its own line above: with no index on a phone, the card
-     is the only thing that can say what the project is. */
+  /* Labels sit in the card's bottom corner rather than under the image — the
+     image floats in the matte, so hanging them off it looks arbitrary. */
   .card-labels {
     position: absolute;
     left: 16px;
@@ -901,14 +1137,7 @@ body.menu-open #header::before {
     bottom: 14px;
     width: auto;
     margin-top: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
     z-index: 2;
-  }
-
-  .card-name {
-    display: inline-block;
   }
 
   .index-box {
@@ -1012,19 +1241,28 @@ body.menu-open #header::before {
 
 /* --------------------------------------------------------------------------
    Reduced motion
-   The trail and the scroll blur are the idea, so they stay. The long
-   cross-fades just stop being long.
+   The scroll blur is the idea, so it stays. The long sweeps and fades stop
+   being long, and the wiggle stops entirely — it's the one thing here that
+   moves without being asked.
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .screen,
-  .about-intro,
-  .about-info,
+  .ha-lift,
+  .hero,
+  .intro-blur,
+  .extras,
   .grid,
-  .home-center,
   .cover-bg,
-  .trail-img,
+  .card-labels,
+  .detail.is-out,
+  .detail.is-in,
   .plate {
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  .open-chip {
+    animation: none;
   }
 }

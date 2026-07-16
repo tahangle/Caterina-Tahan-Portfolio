@@ -1,13 +1,19 @@
 /* ==========================================================================
-   Caterina Tahan — v5
+   Caterina Tahan — v7
 
-   One page, four screens, no build step. Navigation runs through the URL
-   hash so every screen and project stays linkable:
+   One page, no build step. Navigation runs through the URL hash so every
+   screen and project stays linkable:
 
      #/            home
      #/about       about
      #/projects    gallery
      #/manon       a project, by its key in data.js
+
+   Home and About are ONE view, not two. Home is the giant "tahan" with the
+   About text sitting under it, blurred; About unblurs that text, reveals the
+   extra sections and lifts the whole block up so the title exits the screen.
+   Because it's one persistent view, moving between the two never re-renders
+   the DOM — it only flips a class on <body>, and CSS animates the rest.
 
    Content lives in data.js. This file is state, routing and behaviour.
    ========================================================================== */
@@ -19,17 +25,25 @@
 
   var MOBILE_MAX = 700;      // matches the CSS breakpoint
   var COLS = 3;              // detail grid columns
-  var TRAIL_THROTTLE = 60;   // ms between trail scraps
-  var TRAIL_FADE = 500;      // ms until a scrap starts fading
-  var TRAIL_REMOVE = 1500;   // ms until it's gone
-  var MOVE_BEFORE_TEXT = 500; // px of movement before the statement can show
-  var PAUSE_BEFORE_TEXT = 800; // ms of stillness after that
-  var DISSOLVE = 360;        // ms of the project cross-dissolve
   var SCROLL_THRESHOLD = 40; // px before we call it "scrolled"
   var FOCUS_RATIO = 0.62;    // plates sharpen as they reach 62% viewport height
   var INDEX_ROW = 18;        // px per index row — 14px text at line-height 1.3
   var WHEEL_MIN = 28;        // min horizontal delta to count as a swipe
   var WHEEL_LOCKOUT = 700;   // ms between wheel-driven project changes
+
+  var TYPE_SPEED = 75;       // ms per character typed
+  var ERASE_SPEED = 40;      // ms per character erased
+  var ROLE_HOLD = 2000;      // ms a finished role sits before erasing
+  var ROLE_GAP = 350;        // ms between erasing one role and typing the next
+  var HERO_ERASE = 90;       // ms per letter when "tahan" unwrites itself
+  var CLOCK_TICK = 15000;    // ms between Paris clock updates
+
+  // Project change: out, swap, in. The transform has to be dropped once the
+  // motion settles — a transformed ancestor makes position:fixed children
+  // (the write-up column) resolve against it instead of the viewport.
+  var PROJ_OUT = 720;        // ms the outgoing project takes to leave
+  var PROJ_PRE = 40;         // ms the incoming project sits pre-positioned
+  var PROJ_SETTLE = 1250;    // ms until the transform is removed
 
   /* ---- state ------------------------------------------------------------ */
 
@@ -40,19 +54,18 @@
     hoverCard: null,
     scrolled: false,
     isMobile: window.innerWidth <= MOBILE_MAX,
-    menuOpen: false
+    menuOpen: false,
+    projPhase: null      // null | out | pre | in
   };
 
   var el = {};           // cached DOM refs
-  var trailTimers = [];  // pending trail timeouts, so we can cancel on exit
-  var uid = 0;
-  var lastTrailAt = 0;
-  var lastX = 0, lastY = 0, moved = 0;
-  var pauseTimer = null, statementTimers = [];
-  var statementShown = false;
-  var dissolveTimer = null;
+  var mounted = false;   // has a view been rendered yet?
   var lastWheelNav = 0;
   var rafPending = false;
+  var projTimers = [];
+  var roleTimer = null, roleIndex = 0, roleText = '';
+  var heroTimer = null;
+  var clockTimer = null;
 
   /* ---- helpers ---------------------------------------------------------- */
 
@@ -111,38 +124,71 @@
     window.location.hash = next;   // triggers hashchange -> applyRoute
   }
 
+  function isHomeAbout(screen) {
+    return screen === 'home' || screen === 'about';
+  }
+
   function applyRoute() {
     var route = parseHash();
 
-    // Switching between two projects cross-dissolves instead of hard-cutting.
+    // Switching between two projects sweeps one out and the next in.
     if (route.screen === 'detail' && state.screen === 'detail' &&
         route.key !== state.detailKey) {
-      crossDissolveTo(route.key);
+      transitionToProject(route.key);
       return;
     }
 
+    // Home <-> About is one view in two states. Never rebuild it: the lift,
+    // the unblur and the title's exit are all mid-flight CSS transitions, and
+    // re-rendering would restart them from scratch. The mounted check matters
+    // on first load, where screen already reads 'home' and nothing is drawn.
+    var staying = mounted &&
+      isHomeAbout(state.screen) && isHomeAbout(route.screen);
+
     state.screen = route.screen;
     state.detailKey = route.key;
-    state.scrolled = false;
     state.menuOpen = false;
-    state.hoverCard = null;
 
-    resetHome();
-    clearTimeout(dissolveTimer);
+    if (staying) {
+      renderChrome();
+      return;
+    }
+
+    state.scrolled = false;
+    state.hoverCard = null;
+    state.projPhase = null;
+    clearTimers(projTimers);
+    clearTimeout(heroTimer);
     window.scrollTo(0, 0);
     render();
   }
 
-  function crossDissolveTo(key) {
-    var screenEl = el.app.querySelector('.screen');
-    if (screenEl) screenEl.classList.remove('is-in');
-    clearTimeout(dissolveTimer);
-    dissolveTimer = setTimeout(function () {
+  // Sweep the current project up and out, swap it, then bring the next one up
+  // from below.
+  function transitionToProject(key) {
+    clearTimers(projTimers);
+    setPhase('out');
+
+    projTimers.push(setTimeout(function () {
+      window.scrollTo(0, 0);
       state.detailKey = key;
       state.scrolled = false;
-      window.scrollTo(0, 0);
+      state.projPhase = 'pre';
       render();
-    }, DISSOLVE);
+
+      projTimers.push(setTimeout(function () { setPhase('in'); }, PROJ_PRE));
+      // Drop the transform once it lands, so the fixed write-up column can
+      // position against the viewport again.
+      projTimers.push(setTimeout(function () { setPhase(null); }, PROJ_SETTLE));
+    }, PROJ_OUT));
+  }
+
+  function setPhase(phase) {
+    state.projPhase = phase;
+    var node = el.app.querySelector('.detail');
+    if (!node) return;
+    node.classList.remove('is-out', 'is-pre', 'is-in');
+    if (phase) node.classList.add('is-' + phase);
   }
 
   /* ---- render: chrome --------------------------------------------------- */
@@ -271,11 +317,12 @@
   function render() {
     renderChrome();
 
-    if (state.screen === 'home') el.app.innerHTML = viewHome();
-    else if (state.screen === 'about') el.app.innerHTML = viewAbout();
+    if (isHomeAbout(state.screen)) el.app.innerHTML = viewHomeAbout();
     else if (state.screen === 'projects') el.app.innerHTML = viewProjects();
     else if (state.screen === 'detail') el.app.innerHTML = viewDetail();
 
+    mounted = true;
+    if (state.projPhase) setPhase(state.projPhase);
     bindScreen();
     renderCover();
     renderIndex();
@@ -302,38 +349,94 @@
     }
   }
 
-  function viewHome() {
-    return '' +
-      '<section class="screen home" id="homeScreen">' +
-        '<div class="trail-layer" id="trailLayer"></div>' +
-        '<div class="home-prompt" id="homePrompt">' + esc(t().drawPrompt) + '</div>' +
-        '<div class="home-center" id="homeCenter"></div>' +
-      '</section>';
-  }
-
-  function viewAbout() {
+  // Home and About share this markup. Which one you're looking at is decided
+  // entirely by the class on <body> — see the .ha rules in styles.css.
+  function viewHomeAbout() {
     var d = t();
+
+    var link = function (href, text) {
+      return '<a class="ha-link" href="' + esc(href) + '" target="_blank" ' +
+             'rel="noopener">' + esc(text) + '</a>';
+    };
+
+    var dots = function (level) {
+      var out = '';
+      for (var i = 0; i < 4; i++) out += i < level ? '●' : '○';
+      return '<span class="lang-dots">' + out + '</span>';
+    };
+
+    var languages = LANGUAGES.map(function (l) {
+      return '<p>' + esc(d[l.key]) + ' ' + dots(l.level) + '</p>';
+    }).join('');
+
     return '' +
-      '<section class="screen about" id="aboutScreen">' +
-        '<div class="about-intro" data-fade="80">' +
-          '<p>' + esc(d.aboutIntro1) + '</p>' +
-          '<p>' + esc(d.aboutIntro2) + '</p>' +
-        '</div>' +
-        '<div class="about-info" data-fade="260">' +
-          '<div>' +
-            '<h2>' + esc(d.servicesTitle) + '</h2>' +
-            '<ul>' +
-              '<li>' + esc(d.svcCreative) + '</li>' +
-              '<li>' + esc(d.svcUiux) + '</li>' +
-              '<li>' + esc(d.svcBrand) + '</li>' +
-              '<li>' + esc(d.svcEditorial) + '</li>' +
-            '</ul>' +
-          '</div>' +
-          '<div>' +
-            '<h2>' + esc(d.contactTitle) + '</h2>' +
-            '<p><a href="mailto:' + esc(CONTACT.email) + '">' +
-              esc(CONTACT.email) + '</a></p>' +
-            '<p>' + esc(CONTACT.phone) + '</p>' +
+      '<section class="screen ha" id="haScreen">' +
+        '<div class="ha-lift">' +
+          '<h1 class="hero" id="hero">tahan</h1>' +
+          '<div class="ha-row">' +
+
+            '<div class="intro-col">' +
+              '<p>' + esc(d.introLead) +
+                ' <span class="role" id="role"></span></p>' +
+              // Blurred on Home; clicking any of them is a way into About.
+              '<p class="intro-blur" data-to-about>' + esc(d.introP2) + '</p>' +
+              '<p class="intro-blur" data-to-about>' + esc(d.introP3) + '</p>' +
+              '<p class="intro-blur" data-to-about>' + esc(d.introP4) + '</p>' +
+            '</div>' +
+
+            '<div class="info-col">' +
+              '<div class="info-grid">' +
+                '<div>' +
+                  '<p class="info-head">' + esc(d.servicesTitle) + '</p>' +
+                  '<p>' + esc(d.svcWebDev) + '</p>' +
+                  '<p>' + esc(d.svcWebDesign) + '</p>' +
+                  '<p>' + esc(d.svcUiux) + '</p>' +
+                  '<p>' + esc(d.svcBrand) + '</p>' +
+                  '<p>' + esc(d.svcEditorial) + '</p>' +
+                '</div>' +
+                '<div>' +
+                  '<p class="info-head">' + esc(d.contactTitle) + '</p>' +
+                  '<p><a class="ha-link" href="mailto:' + esc(CONTACT.email) +
+                    '">' + esc(CONTACT.email) + '</a></p>' +
+                  '<p>' + esc(CONTACT.phone) + '</p>' +
+                '</div>' +
+              '</div>' +
+
+              // Only present on About; fades in behind the lift.
+              '<div class="extras">' +
+                '<div class="info-grid">' +
+                  '<p>' + esc(d.languagesTitle) + '</p>' +
+                  '<div>' + languages + '</div>' +
+                '</div>' +
+                '<div class="info-grid">' +
+                  '<p>' + esc(d.educationTitle) + '</p>' +
+                  '<div>' +
+                    '<p>' + link(LINKS.rufa, d.edu1a) + '</p>' +
+                    '<p>' + link(LINKS.rufa, d.edu1b) + '</p>' +
+                    '<p>' + esc(d.edu1c) + '</p>' +
+                    '<p class="ha-gap">' + link(LINKS.esad, d.edu2a) + '</p>' +
+                    '<p>' + link(LINKS.esad, d.edu2b) + '</p>' +
+                    '<p>' + esc(d.edu2c) + '</p>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="info-grid">' +
+                  '<p>' + esc(d.experienceTitle) + '</p>' +
+                  '<div>' +
+                    '<p class="exp-role">' + esc(d.exp1a) +
+                      '<a class="chip open-chip" href="mailto:' +
+                      esc(CONTACT.email) + '">' + esc(d.openToWork) + '</a></p>' +
+                    '<p>' + esc(d.exp1b) + '</p>' +
+                    '<p class="ha-gap">' +
+                      link(LINKS.vacarme, d.expIntern + ', Studio Vacarme') +
+                    '</p>' +
+                    '<p>' + esc(d.exp2b) + '</p>' +
+                    '<p class="ha-gap">' + esc(d.expIntern) + ', Sim City LTD</p>' +
+                    '<p>' + esc(d.exp3b) + '</p>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+
+            '</div>' +
           '</div>' +
         '</div>' +
       '</section>';
@@ -355,12 +458,8 @@
             gif +
           '</span>' +
           '<span class="card-labels">' +
-            // Mobile only — there's no index on a phone to name the project.
-            '<span class="chip card-name">' + esc(p.idxTitle) + '</span>' +
-            '<span class="card-meta">' +
-              '<span class="chip">' + esc(p.date) + '</span>' +
-              '<span class="chip">' + esc(p.category) + '</span>' +
-            '</span>' +
+            '<span class="chip">' + esc(p.date) + '</span>' +
+            '<span class="chip">' + esc(p.category) + '</span>' +
           '</span>' +
         '</a>';
     }).join('');
@@ -439,20 +538,15 @@
   /* ---- per-screen wiring ------------------------------------------------ */
 
   function bindScreen() {
-    if (state.screen === 'home') {
-      var home = $('homeScreen');
-      home.addEventListener('mousemove', onHomeMove);
-      home.addEventListener('touchmove', onHomeTouch, { passive: true });
-      home.addEventListener('touchstart', hidePrompt, { passive: true });
-      home.addEventListener('click', function () { navigate('about'); });
-    }
-
-    if (state.screen === 'about') {
-      // Clicking the page moves on, but not when you're clicking the email.
-      $('aboutScreen').addEventListener('click', function (e) {
-        if (e.target.closest('a')) return;
-        navigate('projects');
-      });
+    if (isHomeAbout(state.screen)) {
+      // The blurred paragraphs are the invitation into About.
+      var blurred = el.app.querySelectorAll('[data-to-about]');
+      for (var b = 0; b < blurred.length; b++) {
+        blurred[b].addEventListener('click', function () {
+          if (state.screen === 'home') navigate('about');
+        });
+      }
+      startTyping();
     }
 
     if (state.screen === 'projects') {
@@ -465,90 +559,78 @@
     }
   }
 
-  /* ---- home: cursor trail ----------------------------------------------- */
+  /* ---- home: the role typewriter ---------------------------------------- */
 
-  function resetHome() {
-    clearTimeout(pauseTimer);
-    clearTimers(statementTimers);
-    clearTimers(trailTimers);
-    moved = 0; lastX = 0; lastY = 0; statementShown = false;
+  // Types a role, holds it, erases it, moves to the next. Runs for as long as
+  // the home/about view is mounted.
+  function startTyping() {
+    clearTimeout(roleTimer);
+    var node = $('role');
+    if (!node) return;
+
+    var type = function () {
+      var target = ROLES[roleIndex];
+      if (roleText.length < target.length) {
+        roleText = target.slice(0, roleText.length + 1);
+        node.textContent = roleText;
+        roleTimer = setTimeout(type, TYPE_SPEED);
+      } else {
+        roleTimer = setTimeout(erase, ROLE_HOLD);
+      }
+    };
+
+    var erase = function () {
+      if (roleText.length > 0) {
+        roleText = roleText.slice(0, -1);
+        node.textContent = roleText;
+        roleTimer = setTimeout(erase, ERASE_SPEED);
+      } else {
+        roleIndex = (roleIndex + 1) % ROLES.length;
+        roleTimer = setTimeout(type, ROLE_GAP);
+      }
+    };
+
+    node.textContent = roleText;
+    type();
   }
 
-  // Touch users get told to drag, since there's no pointer to discover the
-  // trail with. The moment they do, the prompt gets out of the way.
-  function hidePrompt() {
-    var prompt = $('homePrompt');
-    if (prompt) prompt.classList.add('is-out');
+  // Leaving home for the projects gallery unwrites "tahan" letter by letter
+  // first, so the title doesn't just vanish under the transition.
+  function eraseHeroThen(done) {
+    var hero = $('hero');
+    if (!hero || state.screen !== 'home') { done(); return; }
+
+    var word = 'tahan';
+    var n = word.length;
+
+    var step = function () {
+      n--;
+      hero.textContent = word.slice(0, n);
+      if (n > 0) heroTimer = setTimeout(step, HERO_ERASE);
+      else done();
+    };
+
+    clearTimeout(heroTimer);
+    heroTimer = setTimeout(step, 60);
   }
 
-  function onHomeTouch(e) {
-    hidePrompt();
-    var touch = e.touches && e.touches[0];
-    if (touch) onHomeMove({ clientX: touch.clientX, clientY: touch.clientY });
-  }
+  /* ---- the Paris clock in the side rail --------------------------------- */
 
-  function onHomeMove(e) {
-    var layer = $('trailLayer');
-    if (!layer) return;
-
-    if (lastX !== 0 || lastY !== 0) {
-      var dx = e.clientX - lastX, dy = e.clientY - lastY;
-      moved += Math.sqrt(dx * dx + dy * dy);
-    }
-    lastX = e.clientX; lastY = e.clientY;
-
-    var now = Date.now();
-    if (now - lastTrailAt >= TRAIL_THROTTLE) {
-      lastTrailAt = now;
-      spawnScrap(layer, e.clientX, e.clientY);
-    }
-
-    // The statement waits for you to have wandered, then stopped.
-    clearTimeout(pauseTimer);
-    if (!statementShown && moved >= MOVE_BEFORE_TEXT) {
-      pauseTimer = setTimeout(showStatement, PAUSE_BEFORE_TEXT);
-    }
-  }
-
-  function spawnScrap(layer, x, y) {
-    var src = TRAIL_IMAGES[uid % TRAIL_IMAGES.length];
-    uid++;
-
-    var node = document.createElement('div');
-    node.className = 'trail-img';
-    node.style.left = (x - 50) + 'px';
-    node.style.top = (y - 50) + 'px';
-    node.style.backgroundImage = 'url("' + src + '")';
-    layer.appendChild(node);
-
-    trailTimers.push(setTimeout(function () {
-      node.classList.add('is-out');
-    }, TRAIL_FADE));
-
-    trailTimers.push(setTimeout(function () {
-      if (node.parentNode) node.parentNode.removeChild(node);
-    }, TRAIL_REMOVE));
-  }
-
-  function showStatement() {
-    var center = $('homeCenter');
-    if (!center) return;
-    statementShown = true;
-
-    var d = t();
-    center.textContent = d.centerText;      // "Now you know me."
-    center.classList.add('is-in');
-
-    statementTimers.push(setTimeout(function () {
-      center.classList.remove('is-in');
-
-      statementTimers.push(setTimeout(function () {
-        // "Click to know more." — "Click" is its own run in the design.
-        center.innerHTML = '<span>' + esc(d.clickWord) + '</span>' +
-                           '<span>' + esc(d.clickMore) + '</span>';
-        center.classList.add('is-in');
-      }, 500));
-    }, 2000));
+  function startClock() {
+    var tick = function () {
+      var time;
+      try {
+        time = new Date().toLocaleTimeString('en-GB', {
+          hour: '2-digit', minute: '2-digit', timeZone: RAIL.timezone
+        });
+      } catch (e) {
+        return; // no Intl timezone support: leave the rail slot empty
+      }
+      el.railTime.textContent = time + RAIL.timeSuffix;
+    };
+    tick();
+    clearInterval(clockTimer);
+    clockTimer = setInterval(tick, CLOCK_TICK);
   }
 
   /* ---- detail: scroll blur ---------------------------------------------- */
@@ -655,6 +737,23 @@
     el.socialIg = $('socialIg');
     el.socialLi = $('socialLi');
     el.socialMail = $('socialMail');
+    el.railPlace = $('railPlace');
+    el.railCoords = $('railCoords');
+    el.railTime = $('railTime');
+
+    el.railPlace.textContent = RAIL.place;
+    el.railCoords.textContent = RAIL.coords;
+    startClock();
+
+    // Leaving home for the gallery unwrites the title first.
+    var projectsLinks = document.querySelectorAll('[data-nav="projects"]');
+    for (var p = 0; p < projectsLinks.length; p++) {
+      projectsLinks[p].addEventListener('click', function (e) {
+        if (state.screen !== 'home') return;   // nothing to unwrite
+        e.preventDefault();
+        eraseHeroThen(function () { navigate('projects'); });
+      });
+    }
 
     // Language toggle.
     el.langToggle.addEventListener('click', function (e) {

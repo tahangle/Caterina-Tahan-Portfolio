@@ -107,51 +107,129 @@ const PROJECTS = [
   }
 ];
 
-// Cursor-trail scraps for the home screen.
-const TRAIL_IMAGES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-  28, 29, 30, 31, 32, 33, 34, 35, 36, 38, 39, 40, 41, 42, 43, 47]
-  .map(n => `Images/Gallery/Group ${n}.png`);
+// The roles the typewriter cycles through on the home line. Left untranslated
+// on purpose — the design reference hardcodes them in English for both
+// languages, since they read as job titles rather than prose.
+const ROLES = [
+  'Graphic Designer.',
+  'UI/UX Designer.',
+  'Identity Designer.',
+  'Creative Developer.'
+];
+
+// Fixed left rail.
+const RAIL = {
+  place: 'Paris France',
+  coords: '48.8566° N  2.3522° E',
+  timezone: 'Europe/Paris',
+  timeSuffix: ' CET'
+};
+
+// Links out of the About column.
+const LINKS = {
+  rufa: 'https://www.unirufa.it/en/',
+  esad: 'https://esad.pt/en',
+  vacarme: 'https://studiovacarme.com/'
+};
 
 const I18N = {
   en: {
     navAbout: 'About',
     navProjects: 'Projects',
     tagline: 'Freelance Designer — Art Direction, Brand, Web',
-    centerText: 'Now you know me.',
-    clickWord: 'Click',
-    clickMore: ' to know more.',
-    drawPrompt: 'Draw here.',
-    aboutIntro1: 'Let me introduce myself. I am Caterina and I am a Digital Designer. A constant back-and-forth between Venezuela, Portugal, and Italy shaped my love for multiculturalism, communication, and art, a passion that led me to pursue a Bachelor in Graphic Design at the Rome University of Fine Arts (2018–2021).',
-    aboutIntro2: 'I am currently based in Paris.',
+
+    introLead: 'Let me introduce myself. I am Caterina and I am a',
+    introP2: 'A constant back-and-forth between Venezuela, Portugal, and Italy shaped my love for multiculturalism, communication, and art.',
+    introP3: 'This passion led me to pursue a Bachelor in Graphic Design at the Rome University of Fine Arts (2018–2021).',
+    introP4: 'I am currently based in Paris.',
+
     servicesTitle: 'Services',
-    svcCreative: 'Creative Development',
+    svcWebDev: 'Web Development',
+    svcWebDesign: 'Web Design',
     svcUiux: 'UI/UX Design',
     svcBrand: 'Brand Design',
     svcEditorial: 'Editorial Design',
+
     contactTitle: 'Contact',
-    copyright: '© 2025 Caterina Tahan.',
+
+    languagesTitle: 'Languages',
+    lang1: 'Italian',
+    lang2: 'Spanish',
+    lang3: 'English',
+    lang4: 'French',
+
+    educationTitle: 'Education',
+    edu1a: 'Bachelor in Graphic Design',
+    edu1b: 'Rome University of Fine Arts (RUFA)',
+    edu1c: '2018 to 2022',
+    edu2a: 'Erasmus in Communication Design',
+    edu2b: 'ESAD Porto',
+    edu2c: '2021',
+
+    experienceTitle: 'Experience',
+    openToWork: 'Open to work',
+    exp1a: 'Freelance Designer',
+    exp1b: 'Paris, since 2021',
+    expIntern: 'Graphic Design Intern',
+    exp2b: 'Paris, 2022 to 2023',
+    exp3b: 'Porto, 2021 to 2022',
+
+    copyright: '© 2026 Caterina Tahan.',
     rights: 'All rights reserved.'
   },
   fr: {
     navAbout: 'À propos',
     navProjects: 'Projets',
     tagline: 'Freelance Designer — Art Direction, Brand, Web',
-    centerText: 'Maintenant vous me connaissez.',
-    clickWord: 'Cliquez',
-    clickMore: ' pour en savoir plus.',
-    drawPrompt: 'Dessinez ici.',
-    aboutIntro1: "Je suis Caterina, Designer Digital. Entre le Venezuela, le Portugal et l'Italie, j'ai développé un amour pour le multiculturalisme, la communication et l'art — une passion qui m'a menée vers une Licence en Design Graphique à l'Académie des Beaux-Arts de Rome (2018–2021).",
-    aboutIntro2: 'Je suis actuellement basée à Paris.',
+
+    introLead: 'Laissez-moi me présenter. Je suis Caterina et je suis',
+    introP2: "Un va-et-vient constant entre le Venezuela, le Portugal et l'Italie a façonné mon amour pour le multiculturalisme, la communication et l'art.",
+    introP3: 'Cette passion m’a menée vers une Licence en Design Graphique à la Rome University of Fine Arts (2018–2021).',
+    introP4: 'Je suis actuellement basée à Paris.',
+
     servicesTitle: 'Services',
-    svcCreative: 'Développement Créatif',
+    svcWebDev: 'Développement Web',
+    svcWebDesign: 'Design Web',
     svcUiux: 'Design UI/UX',
     svcBrand: 'Design de Marque',
     svcEditorial: 'Design Éditorial',
+
     contactTitle: 'Contact',
-    copyright: '© 2025 Caterina Tahan.',
+
+    languagesTitle: 'Langues',
+    lang1: 'Italien',
+    lang2: 'Espagnol',
+    lang3: 'Anglais',
+    lang4: 'Français',
+
+    educationTitle: 'Formation',
+    edu1a: 'Licence en Design Graphique',
+    edu1b: 'Rome University of Fine Arts (RUFA)',
+    edu1c: '2018 à 2022',
+    edu2a: 'Erasmus en Design de Communication',
+    edu2b: 'ESAD Porto',
+    edu2c: '2021',
+
+    experienceTitle: 'Expérience',
+    openToWork: 'Disponible',
+    exp1a: 'Designer Freelance',
+    exp1b: 'Paris, depuis 2021',
+    expIntern: 'Stagiaire en Design Graphique',
+    exp2b: 'Paris, 2022 à 2023',
+    exp3b: 'Porto, 2021 à 2022',
+
+    copyright: '© 2026 Caterina Tahan.',
     rights: 'Tous droits réservés.'
   }
 };
+
+// Language proficiency: filled dots out of four.
+const LANGUAGES = [
+  { key: 'lang1', level: 4 },
+  { key: 'lang2', level: 4 },
+  { key: 'lang3', level: 4 },
+  { key: 'lang4', level: 3 }
+];
 
 const CONTACT = {
   email: 'ccaterinatahan@gmail.com',
