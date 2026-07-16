@@ -288,6 +288,18 @@ body.menu-open #header::before {
   body.screen-about #header::before {
     content: none;
   }
+
+  /* Lift the rail above the header on the scrolling pages so the header's
+     blur pane never smears "PARIS FRANCE". Painting after the header means
+     the rail isn't part of the pane's backdrop, so it stays sharp. Scoped by
+     body class both to limit it to the pages that have the pane and to
+     outrank the later base .rail rule (media queries add no specificity).
+     The rail is a thin left strip with pointer-events:none, so it never
+     touches the header's controls. Desktop only — mobile is separate. */
+  body.screen-projects .rail,
+  body.screen-detail .rail {
+    z-index: 250;
+  }
 }
 
 .logo {
