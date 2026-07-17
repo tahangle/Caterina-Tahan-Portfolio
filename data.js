@@ -46,7 +46,7 @@ const PROJECTS = [
     key: 'grammaroli',
     idxTitle: 'grammaroli',
     date: '2020',
-    category: 'Brand Identity · UI/UX',
+    category: 'Brand Identity · UI',
     cover: 'Images/Projects/Grammaroli/Grammaroli_02.png',
     coverFit: 'contain',
     galleryCover: 'Images/Projects/Desktop_02.png',
@@ -112,7 +112,7 @@ const PROJECTS = [
 // languages, since they read as job titles rather than prose.
 const ROLES = [
   'Graphic Designer.',
-  'UI/UX Designer.',
+  'UI Designer.',
   'Identity Designer.',
   'Creative Developer.'
 ];
@@ -146,7 +146,7 @@ const I18N = {
     servicesTitle: 'Services',
     svcWebDev: 'Web Development',
     svcWebDesign: 'Web Design',
-    svcUiux: 'UI/UX Design',
+    svcUiux: 'UI Design',
     svcBrand: 'Brand Design',
     svcEditorial: 'Editorial Design',
 
@@ -190,7 +190,7 @@ const I18N = {
     servicesTitle: 'Services',
     svcWebDev: 'Développement Web',
     svcWebDesign: 'Design Web',
-    svcUiux: 'Design UI/UX',
+    svcUiux: 'Design UI',
     svcBrand: 'Design de Marque',
     svcEditorial: 'Design Éditorial',
 
