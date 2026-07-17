@@ -28,7 +28,8 @@
   var SCROLL_THRESHOLD = 40; // px before we call it "scrolled"
   var FOCUS_RATIO = 0.62;    // plates sharpen as they reach 62% viewport height
   var INDEX_ROW = 18;        // px per index row — 14px text at line-height 1.3
-  var WHEEL_MIN = 28;        // min horizontal delta to count as a swipe
+  var WHEEL_SWIPE = 120;     // total horizontal travel (px) to change project
+  var WHEEL_GAP = 150;       // ms of quiet that marks the start of a new gesture
   var WHEEL_LOCKOUT = 700;   // ms between wheel-driven project changes
 
   var TYPE_SPEED = 75;       // ms per character typed
@@ -61,6 +62,8 @@
   var el = {};           // cached DOM refs
   var mounted = false;   // has a view been rendered yet?
   var lastWheelNav = 0;
+  var lastWheelTime = 0;    // when the last wheel event arrived (gesture detection)
+  var wheelAccumX = 0;      // horizontal travel built up within the current gesture
   var rafPending = false;
   var projTimers = [];
   var roleTimer = null, roleIndex = 0, roleText = '';
@@ -187,8 +190,12 @@
     state.projPhase = phase;
     var node = el.app.querySelector('.detail');
     if (!node) return;
-    node.classList.remove('is-out', 'is-pre', 'is-in');
-    if (phase) node.classList.add('is-' + phase);
+    node.classList.remove('is-out', 'is-pre', 'is-in', 'is-set');
+    // The settled state ('is-set') keeps the project visible but drops the
+    // transform, so the fixed write-up column anchors to the viewport again.
+    // Clearing every class instead would fall back to .screen's opacity:0 and
+    // the whole project would fade to nothing a second after it arrived.
+    node.classList.add(phase ? 'is-' + phase : 'is-set');
   }
 
   /* ---- render: chrome --------------------------------------------------- */
@@ -695,14 +702,31 @@
 
   function onWheel(e) {
     if (state.screen !== 'detail') return;
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-    if (Math.abs(e.deltaX) < WHEEL_MIN) return;
 
     var now = Date.now();
-    if (now - lastWheelNav < WHEEL_LOCKOUT) return;
-    lastWheelNav = now;
 
-    navigate('detail', siblingKey(e.deltaX > 0 ? 1 : -1));
+    // A pause since the last wheel event marks a fresh gesture — clear any
+    // build-up so the momentum tail of a previous scroll can't bleed into it.
+    if (now - lastWheelTime > WHEEL_GAP) wheelAccumX = 0;
+    lastWheelTime = now;
+
+    // Only accumulate when the motion is *clearly* sideways. The 1.5x margin
+    // rejects the incidental deltaX that rides along with a vertical trackpad
+    // scroll — that stray horizontal jitter was switching projects at random.
+    if (Math.abs(e.deltaX) < Math.abs(e.deltaY) * 1.5) {
+      wheelAccumX = 0;   // any vertical intent cancels a half-finished swipe
+      return;
+    }
+    wheelAccumX += e.deltaX;
+
+    // Require a deliberate amount of horizontal travel before committing.
+    if (Math.abs(wheelAccumX) < WHEEL_SWIPE) return;
+    if (now - lastWheelNav < WHEEL_LOCKOUT) return;
+
+    var dir = wheelAccumX > 0 ? 1 : -1;
+    lastWheelNav = now;
+    wheelAccumX = 0;
+    navigate('detail', siblingKey(dir));
   }
 
   function onResize() {
