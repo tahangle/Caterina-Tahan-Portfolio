@@ -701,6 +701,15 @@
   /* ---- global listeners -------------------------------------------------- */
 
   function onWheel(e) {
+    // About page: the info column is the only scrollable region, so a wheel
+    // over the big intro text (or the empty space) grabs nothing. Forward it
+    // to the column so scrolling works anywhere on the page.
+    if (state.screen === 'about') {
+      var info = el.app.querySelector('.info-col');
+      if (info && !info.contains(e.target)) info.scrollTop += e.deltaY;
+      return;
+    }
+
     if (state.screen !== 'detail') return;
 
     var now = Date.now();
