@@ -1017,8 +1017,43 @@ body.screen-about .extras {
     display: block;
   }
 
+  /* Home declutter: Services/Contact are desktop-only on the homepage. About
+     still shows them. */
+  body.screen-home .info-col {
+    display: none;
+  }
+
+  /* Show the mobile menu — the plain transparent dropdown. Unchanged on every
+     page except home (see below). */
   .menu-overlay {
     display: flex;
+  }
+
+  /* --- Homepage only: opening the menu inverts the whole page — a dramatic
+     dark mode where tahan, the side rail and the typing animation all flip.
+     About / Projects drop below the giant tahan and the footer pins to the
+     bottom. Every other page keeps the plain dropdown above, untouched. --- */
+  body.menu-open.screen-home {
+    filter: invert(1);
+  }
+  body.screen-home .menu-overlay {
+    top: 34vh;   /* below the giant tahan */
+  }
+  body.screen-home .menu-overlay::before {
+    content: none;   /* no blur pane in the inverted view */
+  }
+  body.menu-open.screen-home .site-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 195;
+    margin-top: 0;
+  }
+  /* The social pills lose their edge on the dark invert — give them a clear
+     outline. (Drawn dark; the page invert flips it to a light border.) */
+  body.menu-open.screen-home .socials .chip {
+    border: 1px solid rgba(0, 0, 0, 0.55);
   }
 
   /* Copyright line only — "All rights reserved." is desktop-only. */
