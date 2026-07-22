@@ -2,9 +2,10 @@
 // Adding a project = adding an entry to PROJECTS. Order here is the order
 // everywhere: gallery, index list, and prev/next.
 //
-// Layout note: the detail view pins each project to its own column of a
-// 3-column grid (see COLS in app.js). Past 3 projects that rule needs a
-// design answer — a 4th project currently wraps to column 1 of a second row.
+// Layout note: the gallery is a 3-column grid (see .grid in styles.css); with
+// 4 projects the 4th starts a second row. The detail view pins each project's
+// plates to one of 3 columns via projectIndex % COLS (app.js); the 4th reuses
+// column 0, which is fine since you only ever see one detail at a time.
 
 const COVER_FALLBACK = 'Images/Projects/Desktop_01.png';
 
@@ -16,12 +17,23 @@ const PROJECTS = [
     category: 'Brand · UI · Web',
     cover: 'Images/Projects/Desktop_01.png',
     coverFit: 'cover',
-    // Renamed from the README's frame1/frame2/frame3 — these are the same
-    // full-page screenshots of Manon's site, as shipped in this repo.
+    // Walkthrough of the V3 site. Mobile screens are composited three-per-board
+    // (like Rione); the deck opens on one. Shakira / Georgia Palmer / Amber
+    // Valletta shoots removed. `ar` (width/height) fills each plate.
     slides: [
-      { img: 'Images/Projects/Guilbert/desktop1.jpg' },
-      { img: 'Images/Projects/Guilbert/desktop2.jpg' },
-      { img: 'Images/Projects/Guilbert/mobile.png' }
+      { img: 'Images/Projects/Guilbert/guilbert-mboard-1.png', ar: 1.500 }, // mobile board — home · about · Gosling
+      { img: 'Images/Projects/Guilbert/guilbert-home-d.png',   ar: 1.756 }, // home
+      { img: 'Images/Projects/Guilbert/guilbert-about.png',    ar: 1.779 }, // about
+      { img: 'Images/Projects/Guilbert/guilbert-archive.png',  ar: 1.779 }, // archive — full body of work (overview)
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-01.png', ar: 1.779 }, // WSJ x Ryan Gosling
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-02.png', ar: 1.779 }, // Vogue HK x Anya Taylor Joy
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-03.png', ar: 1.779 }, // WSJ x Oaxaca
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-04.png', ar: 1.779 }, // Muse x Amber Valletta
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-06.png', ar: 1.779 }, // Vogue HK x Rory Van Millingen
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-07.png', ar: 1.779 }, // Vogue HK x Felix Cooper
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-10.png', ar: 1.779 }, // Elle US x Sora Choi
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-11.png', ar: 1.779 }, // Marle Magazine
+      { img: 'Images/Projects/Guilbert/guilbert-shoot-12.png', ar: 1.779 }  // Dom Pérignon
     ],
     en: {
       c1t: 'Briefing',
@@ -103,6 +115,39 @@ const PROJECTS = [
         "Ma solution était Pasaporte, un journal né avec l'intention de rassembler le répertoire iconographique des villes. Pasaporte vise à esquisser et motiver les origines et les conséquences derrière certaines des images mentales liées à certaines régions.",
         "À partir de cette idée, un Magazine inséré a été conçu pour servir d'étude approfondie d'un territoire à travers le travail de photographes."
       ]
+    }
+  },
+  {
+    key: 'rione',
+    idxTitle: 'rione monti',
+    date: '2024',
+    category: 'Brand Identity · UI/UX',
+    // Usual detail layout. Opens on the desktop hero, then alternates desktop
+    // and mobile boards (Frames_02). `ar` (width/height) shapes each plate so
+    // the landscape frame fills it.
+    cover: 'Images/Projects/Rione/rione-cover.png',
+    coverFit: 'cover',
+    slides: [
+      { img: 'Images/Projects/Rione/rione-d-hero.png', ar: 1.600, pad: true }, // desktop — hero (raw screenshot, keep border)
+      { img: 'Images/Projects/Rione/rione-b1.png',     ar: 1.564 }, // mobile
+      { img: 'Images/Projects/Rione/rione-b4.png',     ar: 1.564 }, // desktop — à propos
+      { img: 'Images/Projects/Rione/rione-b2.png',     ar: 1.564 }, // mobile
+      { img: 'Images/Projects/Rione/rione-b5.png',     ar: 1.564 }, // desktop — notre début
+      { img: 'Images/Projects/Rione/rione-b3.png',     ar: 1.564 }, // mobile
+      { img: 'Images/Projects/Rione/rione-b6.png',     ar: 1.564 }, // desktop — menus
+      { img: 'Images/Projects/Rione/rione-b7.png',     ar: 1.564 }  // desktop — témoignages
+    ],
+    en: {
+      c1t: 'Briefing',
+      c1: ['Rione Monti is a Paris-based Italian catering service specializing in authentic Roman cuisine. The brief called for a complete brand identity and digital presence that would convey the warmth of Italian hospitality while appealing to a French audience.'],
+      c2t: 'Concept',
+      c2: ['The visual identity draws from the rich iconography of Roman neighborhoods—the rioni. A warm terracotta palette paired with classical illustrations creates an inviting yet refined aesthetic. The design system extends across menus, social media, and print materials, balancing tradition with contemporary sensibility.']
+    },
+    fr: {
+      c1t: 'Brief',
+      c1: ["Rione Monti est un service de traiteur italien basé à Paris, spécialisé dans la cuisine romaine authentique. Le brief demandait une identité de marque complète et une présence digitale qui transmettrait la chaleur de l'hospitalité italienne tout en séduisant un public français."],
+      c2t: 'Concept',
+      c2: ["L'identité visuelle s'inspire de la riche iconographie des quartiers romains — les rioni. Une palette de terracotta chaude associée à des illustrations classiques crée une esthétique accueillante mais raffinée. Le système de design s'étend aux menus, aux réseaux sociaux et aux supports imprimés, équilibrant tradition et sensibilité contemporaine."]
     }
   }
 ];

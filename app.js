@@ -488,50 +488,68 @@
     var rest = [0, 1, 2].filter(function (c) { return c !== pc; });
     var textCol = pc === 2 ? rest[1] : rest[0];
 
-    var plates = p.slides.map(function (s) {
+    // One image frame. `ar` (width/height) shapes the plate to the image so it
+    // fills instead of letterboxing in the default 0.78 frame.
+    function plateFig(s, cls) {
+      var ar = s.ar ? ' style="aspect-ratio:' + s.ar + '"' : '';
+      // `pad` slides keep the default matte border (for raw screenshots that
+      // have no margin baked in, so they don't bleed to the plate edge).
+      var pad = s.pad ? ' is-pad' : '';
       return '' +
-        '<figure class="plate-fig">' +
-          '<div class="plate" data-plate>' +
+        '<figure class="' + (cls || 'plate-fig') + '">' +
+          '<div class="plate' + pad + '" data-plate' + ar + '>' +
             '<div class="plate-inner" style="background-image:url(\'' +
               esc(s.img) + '\')"></div>' +
           '</div>' +
         '</figure>';
-    }).join('');
+    }
 
     var para = function (arr) {
       return arr.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('');
     };
 
+    var head = '' +
+      '<div class="detail-head">' +
+        '<h1 class="detail-title">' + esc(p.idxTitle) + '</h1>' +
+        '<span class="chip">' + esc(p.date) + '</span>' +
+        '<span class="chip">' + esc(p.category) + '</span>' +
+      '</div>';
+
+    var text = '' +
+      '<div class="detail-text">' +
+        '<div class="detail-block">' +
+          '<h2>' + esc(loc.c1t) + '</h2>' + para(loc.c1) +
+        '</div>' +
+        '<div class="detail-block">' +
+          '<h2>' + esc(loc.c2t) + '</h2>' + para(loc.c2) +
+        '</div>' +
+      '</div>';
+
+    var arrows = '' +
+      '<div class="detail-arrows">' +
+        '<a class="chip" href="' + hashFor('detail', siblingKey(-1)) + '" ' +
+          'aria-label="Previous project">&larr;</a>' +
+        '<a class="chip" href="' + hashFor('detail', siblingKey(1)) + '" ' +
+          'aria-label="Next project">&rarr;</a>' +
+      '</div>';
+
+    // Plates take the project's own column. The write-up goes in one of the
+    // others; the remaining column is left empty on purpose.
+    var plates = p.slides.map(function (s) { return plateFig(s); }).join('');
+
     return '' +
-      '<section class="screen detail" style="--text-col:' + textCol + '">' +
+      '<section class="screen detail detail-' + esc(p.key) + '" style="--text-col:' + textCol + '">' +
         // Mobile only. Desktop gets the title from the fixed index and the
         // date/category from the chips pinned to its row, neither of which
         // exists on a phone — so without this you can't tell what you're
         // looking at.
-        '<div class="detail-head">' +
-          '<h1 class="detail-title">' + esc(p.idxTitle) + '</h1>' +
-          '<span class="chip">' + esc(p.date) + '</span>' +
-          '<span class="chip">' + esc(p.category) + '</span>' +
-        '</div>' +
-        '<div class="detail-text">' +
-          '<div class="detail-block">' +
-            '<h2>' + esc(loc.c1t) + '</h2>' + para(loc.c1) +
-          '</div>' +
-          '<div class="detail-block">' +
-            '<h2>' + esc(loc.c2t) + '</h2>' + para(loc.c2) +
-          '</div>' +
-        '</div>' +
+        head + text +
         '<div class="plate-grid">' +
           '<div class="plate-col" style="grid-column:' + (pc + 1) + '">' +
             plates +
           '</div>' +
         '</div>' +
-        '<div class="detail-arrows">' +
-          '<a class="chip" href="' + hashFor('detail', siblingKey(-1)) + '" ' +
-            'aria-label="Previous project">&larr;</a>' +
-          '<a class="chip" href="' + hashFor('detail', siblingKey(1)) + '" ' +
-            'aria-label="Next project">&rarr;</a>' +
-        '</div>' +
+        arrows +
       '</section>';
   }
 

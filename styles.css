@@ -721,9 +721,10 @@ body.screen-about .extras {
   opacity: 1;
 }
 
-/* The card keeps its portrait footprint, but the image and its labels stack
-   as one unit centred inside it — so the chips sit against the image rather
-   than floating at the bottom of an invisible box. */
+/* The card hugs its (landscape) cover so rows sit a normal gap apart. The
+   image and labels stack as one unit centred inside it, so the chips sit
+   against the image. (Previously a tall 0.78 portrait footprint, which left
+   big empty bands above/below the cover and pushed a second row far down.) */
 .card {
   position: relative;
   display: flex;
@@ -731,7 +732,6 @@ body.screen-about .extras {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  aspect-ratio: 0.78 / 1;
   background: transparent;
   overflow: hidden;
   padding: 4%;
@@ -987,6 +987,16 @@ body.screen-about .extras {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+/* Rione's board frames have 17.6% transparent padding baked in each side, so
+   let them fill the plate. Raw screenshots (marked `pad`) get that same 17.6%
+   inset instead, so their screen content lands at the identical width. */
+.detail-rione .plate-inner {
+  inset: 0;
+}
+.detail-rione .plate.is-pad .plate-inner {
+  inset: 17.6%;
 }
 
 /* Mobile-only; see below. */
